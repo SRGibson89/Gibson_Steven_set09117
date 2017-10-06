@@ -1,0 +1,13 @@
+F:\Coursework\Checkers\Checkers\bin\Debug\Checkers.exe.config
+F:\Coursework\Checkers\Checkers\obj\Debug\Checkers.csprojResolveAssemblyReference.cache
+F:\Coursework\Checkers\Checkers\obj\Debug\MainWindow.baml
+F:\Coursework\Checkers\Checkers\obj\Debug\MainWindow.g.cs
+F:\Coursework\Checkers\Checkers\obj\Debug\App.g.cs
+F:\Coursework\Checkers\Checkers\obj\Debug\Checkers_MarkupCompile.cache
+F:\Coursework\Checkers\Checkers\obj\Debug\Checkers.g.resources
+F:\Coursework\Checkers\Checkers\obj\Debug\Checkers.Properties.Resources.resources
+F:\Coursework\Checkers\Checkers\obj\Debug\Checkers.csproj.GenerateResource.Cache
+F:\Coursework\Checkers\Checkers\bin\Debug\Checkers.exe
+F:\Coursework\Checkers\Checkers\bin\Debug\Checkers.pdb
+F:\Coursework\Checkers\Checkers\obj\Debug\Checkers.exe
+F:\Coursework\Checkers\Checkers\obj\Debug\Checkers.pdb
