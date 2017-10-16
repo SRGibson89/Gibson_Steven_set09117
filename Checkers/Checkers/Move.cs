@@ -41,7 +41,7 @@ namespace Checkers
                 if ((marker1.Row + 1 == marker2.Row) && (marker1.Column + 1 == marker2.Column))
                     return true;
             }
-            if (colour =="BlackKing")
+            if (colour == "BlackKing")
             {
                 if ((marker1.Row - 1 == marker2.Row) && (marker1.Column - 1 == marker2.Column))
                     return true;
@@ -63,7 +63,18 @@ namespace Checkers
                 if ((marker1.Row + 1 == marker2.Row) && (marker1.Column + 1 == marker2.Column))
                     return true;
             }
-            
+            //if (colour == "King")
+            //{
+            //    if ((marker1.Row - 1 == marker2.Row) && (marker1.Column - 1 == marker2.Column))
+            //        return true;
+            //    if ((marker1.Row - 1 == marker2.Row) && (marker1.Column + 1 == marker2.Column))
+            //        return true;
+            //    if ((marker1.Row + 1 == marker2.Row) && (marker1.Column - 1 == marker2.Column))
+            //        return true;
+            //    if ((marker1.Row + 1 == marker2.Row) && (marker1.Column + 1 == marker2.Column))
+            //        return true;
+            //}
+
 
             return false;
         }
@@ -80,7 +91,7 @@ namespace Checkers
             if (colour == "White")
             {
                 if ((marker1.Row + 2 == marker2.Row) && (marker1.Column - 2 == marker2.Column))
-                    return new Marker(marker1.Row - 1, marker1.Column - 1);
+                    return new Marker(marker1.Row + 1, marker1.Column - 1);
                 if ((marker1.Row + 2 == marker2.Row) && (marker1.Column + 2 == marker2.Column))
                     return new Marker(marker1.Row + 1, marker1.Column + 1);
             }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Windows.Resources;
 using System.Windows.Shapes;
 
 namespace Checkers
@@ -20,10 +23,688 @@ namespace Checkers
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Move currentMove;
+        private String winner;
+        private String turn = "Black";
+        public String playername1 = "White", playername2 = "Black";
+        public int numPlayers = 2;
+        System.Media.SoundPlayer winnermusic = new System.Media.SoundPlayer(@"Resources/Winner.wav");
+        System.Media.SoundPlayer backgroundmusic = new System.Media.SoundPlayer(@"Resources/Background.wav");
+        
+
+        
         public MainWindow()
         {
             InitializeComponent();
+            this.Title = "Draughts";
+            BuildBoard();
             
         }
+
+        private void BuildBoard()
+        {
+            var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
+            var BoardWhite = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFF7");
+    
+            
+            for (int row = 1; row < 9; row++)
+            {
+                for (int column = 0; column < 8; column++)
+                {
+                    StackPanel stackPanel = new StackPanel();
+                    if (row % 2 == 1)
+                    {
+                        if (column % 2 == 0)
+                            stackPanel.Background = BoardWhite;
+                        else
+                            stackPanel.Background = BoardBlack;
+                    }
+                    else
+                    {
+                        if (column % 2 == 0)
+                            stackPanel.Background = BoardBlack;
+                        else
+                            stackPanel.Background = BoardWhite;
+                    }
+                    Grid.SetRow(stackPanel, row);
+                    Grid.SetColumn(stackPanel, column);
+                    CheckersGrid.Children.Add(stackPanel);
+                }
+            }
+            Place_Markers();
+        }
+
+        private void Place_Markers()
+        {
+            var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
+            for (int row = 1; row < 9; row++)
+            {
+                for (int column = 0; column < 8; column++)
+                {
+                    StackPanel stackPanel = (StackPanel)GetGridElement(CheckersGrid, row, column);
+                    Button button = new Button();
+                    button.Click += new RoutedEventHandler(Button_Click);
+                    button.Height = 60;
+                    button.Width = 60;
+                    button.HorizontalAlignment = HorizontalAlignment.Center;
+                    button.VerticalAlignment = VerticalAlignment.Center;
+                    var WhiteBrush = new ImageBrush();
+                    WhiteBrush.ImageSource = new BitmapImage(new Uri("Resources/WhiteMarker.png", UriKind.Relative));
+                    var BlackBrush = new ImageBrush();
+                    BlackBrush.ImageSource = new BitmapImage(new Uri("Resources/BlackMarker.png", UriKind.Relative));
+                    switch (row)
+                    {
+                        case 1:
+                            if (column % 2 == 1)
+                            {
+
+                                button.Background = WhiteBrush;
+                                button.Name = "buttonWhite" + row + column;
+                                stackPanel.Children.Add(button);
+                            }
+                            break;
+                        case 2:
+                            if (column % 2 == 0)
+                            {
+                                button.Background = WhiteBrush;
+                                button.Name = "buttonWhite" + row + column;
+                                stackPanel.Children.Add(button);
+                            }
+                            break;
+                        case 3:
+                            if (column % 2 == 1)
+                            {
+                                button.Background = WhiteBrush;
+                                button.Name = "buttonWhite" + row + column;
+                                stackPanel.Children.Add(button);
+                            }
+                            break;
+                        case 4:
+                            if (column % 2 == 0)
+                            {
+                                button.Background = BoardBlack;
+                                button.Name = "button" + row + column;
+                                stackPanel.Children.Add(button);
+                            }
+                            break;
+                        case 5:
+                            if (column % 2 == 1)
+                            {
+                                button.Background = BoardBlack;
+                                button.Name = "button" + row + column;
+                                stackPanel.Children.Add(button);
+                            }
+                            break;
+                        case 6:
+                            if (column % 2 == 0)
+                            {
+                                button.Background = BlackBrush;
+                                button.Name = "buttonBlack" + row + column;
+                                stackPanel.Children.Add(button);
+                            }
+                            break;
+                        case 7:
+                            if (column % 2 == 1)
+                            {
+                                button.Background = BlackBrush;
+                                button.Name = "buttonBlack" + row + column;
+                                stackPanel.Children.Add(button);
+                            }
+                            break;
+                        case 8:
+                            if (column % 2 == 0)
+                            {
+                                button.Background = BlackBrush;
+                                button.Name = "buttonBlack" + row + column;
+                                stackPanel.Children.Add(button);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+   
+
+
+        
+        
+        
+        
+
+        UIElement GetGridElement(Grid grid, int row, int column)
+        {
+            for (int i = 0; i < grid.Children.Count; i++)
+            {
+                UIElement e = grid.Children[i];
+                if (Grid.GetRow(e) == row && Grid.GetColumn(e) == column)
+                    return e;
+            }
+            return null;
+        }
+
+        private void Cleaner()
+        {
+            for (int row = 1; row < 9; row++)
+            {
+                for (int column = 0; column < 8; column++)
+                {
+                    StackPanel stackPanel = (StackPanel)GetGridElement(CheckersGrid, row, column);
+                    CheckersGrid.Children.Remove(stackPanel);
+                }
+            }
+        }
+        public void Button_Click(Object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            StackPanel stackPanel = (StackPanel)button.Parent;
+            int row = Grid.GetRow(stackPanel);
+            int col = Grid.GetColumn(stackPanel);
+            Console.WriteLine("Row: " + row + " Column: " + col);
+            if (currentMove == null)
+                currentMove = new Move();
+            if (currentMove.marker1 == null)
+            {
+                currentMove.marker1 = new Marker(row, col);
+                stackPanel.Background = Brushes.SkyBlue;
+            }
+            else
+            {
+                currentMove.marker2 = new Marker(row, col);
+                stackPanel.Background = Brushes.SkyBlue;
+            }
+            if ((currentMove.marker1 != null) && (currentMove.marker2 != null))
+            {
+                if (numPlayers == 1)
+                {
+                    if (CheckMove())
+                    {
+                        MakeMove();
+                        // aiturn();
+                    }
+                    //MessageBox.Show("hello player 1");
+                }
+                else if (numPlayers == 2)
+                {
+                    if (CheckMove())
+                    {
+                        MakeMove();
+                        if (turn == "Black")
+                        {
+                            turn = "White";
+                            lblturn.Content = playername1 + " Turn!";
+                        }
+                        else if (turn == "White")
+                        {
+                            turn = "Black";
+                            lblturn.Content = playername2 + " Turn!";
+                        }
+                    }
+                        
+                }
+            }
+        }
+
+        private void MakeMove()
+        {
+            if ((currentMove.marker1 != null) && (currentMove.marker2 != null))
+            {
+                Console.WriteLine("Marker1 " + currentMove.marker1.Row + ", " + currentMove.marker1.Column);
+                Console.WriteLine("Marker2 " + currentMove.marker2.Row + ", " + currentMove.marker2.Column);
+                StackPanel stackPanel1 = (StackPanel)GetGridElement(CheckersGrid, currentMove.marker1.Row, currentMove.marker1.Column);
+                StackPanel stackPanel2 = (StackPanel)GetGridElement(CheckersGrid, currentMove.marker2.Row, currentMove.marker2.Column);
+                CheckersGrid.Children.Remove(stackPanel1);
+                CheckersGrid.Children.Remove(stackPanel2);
+                Grid.SetRow(stackPanel1, currentMove.marker2.Row);
+                Grid.SetColumn(stackPanel1, currentMove.marker2.Column);
+                CheckersGrid.Children.Add(stackPanel1);
+                Grid.SetRow(stackPanel2, currentMove.marker1.Row);
+                Grid.SetColumn(stackPanel2, currentMove.marker1.Column);
+                CheckersGrid.Children.Add(stackPanel2);
+                kingMe(currentMove.marker2);
+                currentMove = null;
+                
+            }
+            checkforWinnner();
+        }
+
+        private void kingMe(Marker marker)
+        {
+            StackPanel stackPanel = (StackPanel)GetGridElement(CheckersGrid, marker.Row, marker.Column);
+
+            if (stackPanel.Children.Count > 0)
+            {
+                var WhiteKingBrush = new ImageBrush();
+                WhiteKingBrush.ImageSource = new BitmapImage(new Uri("Resources/WhiteKingMarker.png", UriKind.Relative));
+                Button button = (Button)stackPanel.Children[0];
+                if ((marker.Row == 8) && (button.Name.Contains("White")) && (!button.Name.Contains("WhiteKing")))
+                {
+                    button.Name = "White" + "WhiteKing" + marker.Row + marker.Column;
+                    button.Background = WhiteKingBrush;
+                }
+            }
+        }
+
+        private void checkforWinnner()
+        {
+            int Whites = 0, Blacks = 0;
+
+            for (int row = 1; row < 9; row++)
+            {
+                
+                for (int column = 0; column < 8; column++)
+                {
+                    StackPanel stackPanel = (StackPanel)GetGridElement(CheckersGrid, row, column);
+                    if (stackPanel.Children.Count > 0)
+                    {
+                        Button button = (Button)stackPanel.Children[0];
+                        if (button.Name.Contains("White"))
+                            Whites++;
+                        if (button.Name.Contains("Black"))
+                            Blacks++;
+                    }
+                }
+            }
+           
+            if (Whites == 0 )
+            {
+                winner = "Black";
+                winnermusic.Play();
+                var result = MessageBox.Show(playername2 + " has won!", "Winner", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+                if (result == MessageBoxResult.Yes)
+                {
+                    newGame();
+                }
+            }
+
+            if (Blacks == 0 )
+            {
+                winner = "White";
+                winnermusic.Play();
+                var result = MessageBox.Show(playername1 + " has won!", "Winner", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+                if (result == MessageBoxResult.Yes)
+                {
+                    newGame();
+                }
+            }
+
+        }
+
+
+        private Boolean CheckMove()
+        {
+            var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
+            StackPanel stackPanel1 = (StackPanel)GetGridElement(CheckersGrid, currentMove.marker1.Row, currentMove.marker1.Column);
+            StackPanel stackPanel2 = (StackPanel)GetGridElement(CheckersGrid, currentMove.marker2.Row, currentMove.marker2.Column);
+            Button button1 = (Button)stackPanel1.Children[0];
+            Button button2 = (Button)stackPanel2.Children[0];
+            stackPanel1.Background = BoardBlack;
+            stackPanel2.Background = BoardBlack;
+
+            if ((turn == "White") && (button1.Name.Contains("Black")))
+            {
+                currentMove.marker1 = null;
+                currentMove.marker2 = null;
+                showError("It is "+ playername1 +" turn.");
+                return false;
+            }
+            if ((turn == "Black") && (button1.Name.Contains("White")))
+            {
+                currentMove.marker1 = null;
+                currentMove.marker2 = null;
+                showError("It is "+ playername2 +" turn.");
+                return false;
+            }
+            if (button1.Equals(button2))
+            {
+                currentMove.marker1 = null;
+                currentMove.marker2 = null;
+                return false;
+            }
+            if (button1.Name.Contains("Black"))
+            {
+                return CheckMoveBlack(button1, button2);
+            }
+            else if (button1.Name.Contains("White"))
+            {
+                return CheckMoveWhite(button1, button2);
+            }
+            else
+            {
+                currentMove.marker1 = null;
+                currentMove.marker2 = null;
+                Console.WriteLine("False");
+                return false;
+            }
+        }
+
+        private bool CheckMoveWhite(Button button1, Button button2)
+        {
+            Checkers_Board currentBoard = GetBoard();
+            List<Move> playerMoves = currentBoard.CheckJumps("White");
+
+            if (playerMoves.Count > 0)
+            {
+                bool invalid = true;
+                foreach (Move move in playerMoves)
+                {
+                    if (currentMove.Equals(move))
+                        invalid = false;
+                }
+                if (invalid)
+                {
+                    showError("Jump must be taken");
+                    currentMove.marker1 = null;
+                    currentMove.marker2 = null;
+                    Console.WriteLine("False");
+                    return false;
+                }
+            }
+
+            if (button1.Name.Contains("White"))
+            {
+                if (button1.Name.Contains("WhiteKing"))
+                {
+                    if ((currentMove.ValidMove("WhiteKing")) && (!button2.Name.Contains("White")) && (!button2.Name.Contains("Black")))
+                        return true;
+                    Marker middleMarker = currentMove.checkJumps("WhiteKing");
+                    if ((middleMarker != null) && (!button2.Name.Contains("White")) && (!button2.Name.Contains("Black")))
+                    {
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(CheckersGrid, middleMarker.Row, middleMarker.Column);
+                        Button middleButton = (Button)middleStackPanel.Children[0];
+                        if (middleButton.Name.Contains("Black"))
+                        {
+                            CheckersGrid.Children.Remove(middleStackPanel);
+                            addWhiteButton(middleMarker);
+                            return true;
+                        }
+                        
+                    }
+                }
+                else
+                {
+                    if ((currentMove.ValidMove("White")) && (!button2.Name.Contains("White")) && (!button2.Name.Contains("Black")))
+                        return true;
+                    Marker middlePiece = currentMove.checkJumps("White");
+                    if ((middlePiece != null) && (!button2.Name.Contains("White")) && (!button2.Name.Contains("Black")))
+                    {
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(CheckersGrid, middlePiece.Row, middlePiece.Column);
+                        Button middleButton = (Button)middleStackPanel.Children[0];
+                        if (middleButton.Name.Contains("Black"))
+                        {
+                            CheckersGrid.Children.Remove(middleStackPanel);
+                            addWhiteButton(middlePiece);
+                            return true;
+                        }
+                    }
+                }
+            }
+            currentMove = null;
+            showError("Invalid Move. Try Again.");
+            return false;
+        }
+
+        private void addWhiteButton(Marker middleMove)
+        {
+            var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
+            StackPanel stackPanel = new StackPanel();
+            stackPanel.Background = BoardBlack;
+            Button button = new Button();
+            button.Click += new RoutedEventHandler(Button_Click);
+            button.Height = 60;
+            button.Width = 60;
+            button.HorizontalAlignment = HorizontalAlignment.Center;
+            button.VerticalAlignment = VerticalAlignment.Center;
+            button.Background = BoardBlack;
+            button.Name = "button" + middleMove.Row + middleMove.Column;
+            stackPanel.Children.Add(button);
+            Grid.SetColumn(stackPanel, middleMove.Column);
+            Grid.SetRow(stackPanel, middleMove.Row);
+            CheckersGrid.Children.Add(stackPanel);
+        }
+        private void kingMeWhite()
+        {
+
+            var WhiteBrush = new ImageBrush();
+            WhiteBrush.ImageSource = new BitmapImage(new Uri("Resources/WhiteMarker.png", UriKind.Relative));
+       }
+
+
+        private bool CheckMoveBlack(Button button1, Button button2)
+        {
+            Checkers_Board currentBoard = GetBoard();
+            List<Move> playerMoves = currentBoard.CheckJumps("Black");
+
+            if (playerMoves.Count > 0)
+            {
+                bool invalid = true;
+                foreach (Move move in playerMoves)
+                {
+                    if (currentMove.Equals(move))
+                        invalid = false;
+                }
+                if (invalid)
+                {
+                    showError("Jump must be taken");
+                    currentMove.marker1 = null;
+                    currentMove.marker2 = null;
+                    Console.WriteLine("False");
+                    return false;
+                }
+            }
+
+            if (button1.Name.Contains("Black"))
+            {
+                if (button1.Name.Contains("BlackKing"))
+                {
+                    if ((currentMove.ValidMove("BlackKing")) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
+                        return true;
+                    Marker middlePiece = currentMove.checkJumps("King");
+                    if ((middlePiece != null) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
+                    {
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(CheckersGrid, middlePiece.Row, middlePiece.Column);
+                        Button middleButton = (Button)middleStackPanel.Children[0];
+                        if (middleButton.Name.Contains("White"))
+                        {
+                            CheckersGrid.Children.Remove(middleStackPanel);
+                            addBlackButton(middlePiece);
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    if ((currentMove.ValidMove("Black")) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
+                        return true;
+                    Marker middlePiece = currentMove.checkJumps("Black");
+                    if ((middlePiece != null) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
+                    {
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(CheckersGrid, middlePiece.Row, middlePiece.Column);
+                        Button middleButton = (Button)middleStackPanel.Children[0];
+                        if (middleButton.Name.Contains("White"))
+                        {
+                            CheckersGrid.Children.Remove(middleStackPanel);
+                            addBlackButton(middlePiece);
+                            return true;
+                        }
+                    }
+                }
+            }
+            currentMove = null;
+            showError("Invalid Move. Try Again.");
+            return false;
+        }
+
+        private void addBlackButton(Marker middleMove)
+        {
+            var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
+            StackPanel stackPanel = new StackPanel();
+            stackPanel.Background = BoardBlack;
+            Button button = new Button();
+            button.Click += new RoutedEventHandler(Button_Click);
+            button.Height = 60;
+            button.Width = 60;
+            button.HorizontalAlignment = HorizontalAlignment.Center;
+            button.VerticalAlignment = VerticalAlignment.Center;
+            button.Background =BoardBlack;
+            button.Name = "button" + middleMove.Row + middleMove.Column;
+            stackPanel.Children.Add(button);
+            Grid.SetColumn(stackPanel, middleMove.Column);
+            Grid.SetRow(stackPanel, middleMove.Row);
+            CheckersGrid.Children.Add(stackPanel);
+        }
+        private void kingMeBlack(Marker middleMove)
+        {
+            var BlackKingBrush = new ImageBrush();
+            BlackKingBrush.ImageSource = new BitmapImage(new Uri("Resources/BlackKingMarker.png", UriKind.Relative));
+            var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
+            StackPanel stackPanel = new StackPanel();
+            stackPanel.Background = BoardBlack;
+            Button button = new Button();
+            button.Click += new RoutedEventHandler(Button_Click);
+            button.Height = 60;
+            button.Width = 60;
+            button.HorizontalAlignment = HorizontalAlignment.Center;
+            button.VerticalAlignment = VerticalAlignment.Center;
+            button.Background = BoardBlack;
+            button.Name = "button" + "BlackKing" + middleMove.Row + middleMove.Column;
+            stackPanel.Children.Add(button);
+            Grid.SetColumn(stackPanel, middleMove.Column);
+            Grid.SetRow(stackPanel, middleMove.Row);
+            CheckersGrid.Children.Add(stackPanel);
+
+
+        }
+
+        private Checkers_Board GetBoard()
+        {
+            Checkers_Board board = new Checkers_Board();
+            for (int row = 1; row < 9; row++)
+            {
+                for (int column = 0; column < 8; column++)
+                {
+                    StackPanel stackPanel = (StackPanel)GetGridElement(CheckersGrid, row, column);
+                    if (stackPanel.Children.Count > 0)
+                    {
+                        Button button = (Button)stackPanel.Children[0];
+                        if (button.Name.Contains("White"))
+                        {
+                            if (button.Name.Contains("King"))
+                                board.SetState(row - 1, column, 3);
+                            else
+                                board.SetState(row - 1, column, 1);
+                        }
+                        else if (button.Name.Contains("Black"))
+                        {
+                            if (button.Name.Contains("King"))
+                                board.SetState(row - 1, column, 4);
+                            else
+                                board.SetState(row - 1, column, 2);
+                        }
+                        else
+                            board.SetState(row - 1, column, 0);
+
+                    }
+                    else
+                    {
+                        board.SetState(row - 1, column, -1);
+                    }
+
+                }
+            }
+            return board;
+        }
+
+        private void showError(string error)
+        {
+            MessageBox.Show(error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void exit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void help_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("\b To Play \n"+
+                "The object of the game is to capture all of your opponent's pieces or block them so they cannot be moved.\n"+
+                "Pieces are always moved diagonally, 1 square at a time, towards the opponent's side of the board.\n"+
+                "You play the entire game on the black squares, you do not need the white ones.\n\n"+
+                "\b Capturing \n"+
+                "You can capture an enemy piece by hopping over it.\n"+
+                "Capturing is also done on the diagonal.\n"+
+                "You have to jump from the square directly next to your target and land on the square just beyond it.\n"+
+                "Your landing square must be vacant.\n"+
+                "The piece captured is removed from the board.\n" + 
+                "If you are able to make a move that results in a capture then you must\n\n"+
+                "\b To Win\n"+
+                "Capture all your opponents pieces.","How To Play");
+        }
+
+        private void option_Click(object sender, RoutedEventArgs e)
+        {
+            //options window to change settings
+            options optionwindow = new options(numPlayers);
+            optionwindow.ShowDialog();
+            if (optionwindow.playbackground == true)
+            {
+                backgroundmusic.Play();
+
+            }
+            if(optionwindow.playbackground == false)
+            {
+                backgroundmusic.Stop();
+            }
+            if (numPlayers != optionwindow.numberOfPlayers)
+            {
+                var result = MessageBox.Show("Changing number of players will restart the game \nDo you want to continue?", "Warning", MessageBoxButton.YesNo,MessageBoxImage.Warning,MessageBoxResult.No);
+                if (result == MessageBoxResult.Yes)
+                {
+                    numPlayers = optionwindow.numberOfPlayers;
+                    newGame();
+                }
+                
+            }
+            
+            playername1 = optionwindow.txtp1.Text;
+            playername2 = optionwindow.txtp2.Text;
+            
+        }
+
+        private void newGame()
+        {
+            Cleaner();
+            BuildBoard();
+            if (winner == "White")
+            {
+                turn = "Black";
+                lblturn.Content = playername2 + " Turn!";
+            }
+            else if ((winner == "Black") || winner == null )
+            {
+                turn = "White";
+                lblturn.Content = playername1 + " Turn!";
+            }
+            
+            //MessageBox.Show("New Game Test");
+            //MessageBox.Show("number of player"+numPlayers.ToString());
+            //MessageBox.Show("player 1 name: " + playername1 +"\nPlayer 2 name: "+playername2);
+        }
+
+        private void newGame_Click(object sender, RoutedEventArgs e)
+        {
+            newGame();
+        }
+
+        private void undo_Click(object sender, RoutedEventArgs e)
+        {
+            winnermusic.Play();
+            MessageBox.Show("Undo Test");
+        }
+
+       
     }
+
 }
