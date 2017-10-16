@@ -1,20 +1,20 @@
 ﻿Checkers
 
 
-winexe
+exe
 C#
 .cs
-G:\Coursework\Checkers\Checkers\obj\Debug\
+E:\GitHub\Gibson_Steven_set09117\Checkers\Checkers\obj\Debug\
 Checkers
 none
 false
 DEBUG;TRACE
-G:\Coursework\Checkers\Checkers\App.xaml
+E:\GitHub\Gibson_Steven_set09117\Checkers\Checkers\App.xaml
 2-32307178
 
 10-1671968502
 12-1401562060
 MainWindow.xaml;options.xaml;
 
-True
+False
 

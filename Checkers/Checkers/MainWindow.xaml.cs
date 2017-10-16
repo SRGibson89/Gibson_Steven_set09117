@@ -68,7 +68,7 @@ namespace Checkers
                     }
                     Grid.SetRow(stackPanel, row);
                     Grid.SetColumn(stackPanel, column);
-                    CheckersGrid.Children.Add(stackPanel);
+                    DraughtsBoard.Children.Add(stackPanel);
                 }
             }
             Place_Markers();
@@ -81,7 +81,7 @@ namespace Checkers
             {
                 for (int column = 0; column < 8; column++)
                 {
-                    StackPanel stackPanel = (StackPanel)GetGridElement(CheckersGrid, row, column);
+                    StackPanel stackPanel = (StackPanel)GetGridElement(DraughtsBoard, row, column);
                     Button button = new Button();
                     button.Click += new RoutedEventHandler(Button_Click);
                     button.Height = 60;
@@ -190,8 +190,8 @@ namespace Checkers
             {
                 for (int column = 0; column < 8; column++)
                 {
-                    StackPanel stackPanel = (StackPanel)GetGridElement(CheckersGrid, row, column);
-                    CheckersGrid.Children.Remove(stackPanel);
+                    StackPanel stackPanel = (StackPanel)GetGridElement(DraughtsBoard, row, column);
+                    DraughtsBoard.Children.Remove(stackPanel);
                 }
             }
         }
@@ -223,7 +223,7 @@ namespace Checkers
                         MakeMove();
                         // aiturn();
                     }
-                    //MessageBox.Show("hello player 1");
+                    
                 }
                 else if (numPlayers == 2)
                 {
@@ -234,11 +234,13 @@ namespace Checkers
                         {
                             turn = "White";
                             lblturn.Content = playername1 + " Turn!";
+                           
                         }
                         else if (turn == "White")
                         {
                             turn = "Black";
                             lblturn.Content = playername2 + " Turn!";
+                            
                         }
                     }
                         
@@ -252,41 +254,58 @@ namespace Checkers
             {
                 Console.WriteLine("Marker1 " + currentMove.marker1.Row + ", " + currentMove.marker1.Column);
                 Console.WriteLine("Marker2 " + currentMove.marker2.Row + ", " + currentMove.marker2.Column);
-                StackPanel stackPanel1 = (StackPanel)GetGridElement(CheckersGrid, currentMove.marker1.Row, currentMove.marker1.Column);
-                StackPanel stackPanel2 = (StackPanel)GetGridElement(CheckersGrid, currentMove.marker2.Row, currentMove.marker2.Column);
-                CheckersGrid.Children.Remove(stackPanel1);
-                CheckersGrid.Children.Remove(stackPanel2);
+                StackPanel stackPanel1 = (StackPanel)GetGridElement(DraughtsBoard, currentMove.marker1.Row, currentMove.marker1.Column);
+                StackPanel stackPanel2 = (StackPanel)GetGridElement(DraughtsBoard, currentMove.marker2.Row, currentMove.marker2.Column);
+                DraughtsBoard.Children.Remove(stackPanel1);
+                DraughtsBoard.Children.Remove(stackPanel2);
                 Grid.SetRow(stackPanel1, currentMove.marker2.Row);
                 Grid.SetColumn(stackPanel1, currentMove.marker2.Column);
-                CheckersGrid.Children.Add(stackPanel1);
+                DraughtsBoard.Children.Add(stackPanel1);
                 Grid.SetRow(stackPanel2, currentMove.marker1.Row);
                 Grid.SetColumn(stackPanel2, currentMove.marker1.Column);
-                CheckersGrid.Children.Add(stackPanel2);
-                kingMe(currentMove.marker2);
+                DraughtsBoard.Children.Add(stackPanel2);
+                KingMe(currentMove.marker2);
                 currentMove = null;
                 
             }
-            checkforWinnner();
+            
+            CheckforWinnner();
         }
 
-        private void kingMe(Marker marker)
+        //Promtions
+        private void KingMe(Marker marker)
         {
-            StackPanel stackPanel = (StackPanel)GetGridElement(CheckersGrid, marker.Row, marker.Column);
+            StackPanel stackPanel = (StackPanel)GetGridElement(DraughtsBoard, marker.Row, marker.Column);
 
             if (stackPanel.Children.Count > 0)
             {
                 var WhiteKingBrush = new ImageBrush();
+                var BlackKingBrush = new ImageBrush();
                 WhiteKingBrush.ImageSource = new BitmapImage(new Uri("Resources/WhiteKingMarker.png", UriKind.Relative));
+                BlackKingBrush.ImageSource = new BitmapImage(new Uri("Resources/BlackKingMarker.png", UriKind.Relative));
                 Button button = (Button)stackPanel.Children[0];
-                if ((marker.Row == 8) && (button.Name.Contains("White")) && (!button.Name.Contains("WhiteKing")))
+                //white marker gets to the other side of the board
+                if (marker.Row == 8)
                 {
-                    button.Name = "White" + "WhiteKing" + marker.Row + marker.Column;
-                    button.Background = WhiteKingBrush;
+                    if ((button.Name.Contains("White")) && (!button.Name.Contains("WhiteKing")))
+                    {
+                        button.Name = "White" + "WhiteKing" + marker.Row + marker.Column;
+                        button.Background = WhiteKingBrush;
+                    }
+                }
+                //black marker gets to ther side the board
+                if (marker.Row == 1)
+                {
+                    if ((button.Name.Contains("Black")) && (!button.Name.Contains("BlackKing")))
+                    {
+                        button.Name = "Black" + "BlackKing" + marker.Row + marker.Column;
+                        button.Background = BlackKingBrush;
+                    }
                 }
             }
         }
 
-        private void checkforWinnner()
+        private void CheckforWinnner()
         {
             int Whites = 0, Blacks = 0;
 
@@ -295,7 +314,7 @@ namespace Checkers
                 
                 for (int column = 0; column < 8; column++)
                 {
-                    StackPanel stackPanel = (StackPanel)GetGridElement(CheckersGrid, row, column);
+                    StackPanel stackPanel = (StackPanel)GetGridElement(DraughtsBoard, row, column);
                     if (stackPanel.Children.Count > 0)
                     {
                         Button button = (Button)stackPanel.Children[0];
@@ -335,8 +354,8 @@ namespace Checkers
         private Boolean CheckMove()
         {
             var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
-            StackPanel stackPanel1 = (StackPanel)GetGridElement(CheckersGrid, currentMove.marker1.Row, currentMove.marker1.Column);
-            StackPanel stackPanel2 = (StackPanel)GetGridElement(CheckersGrid, currentMove.marker2.Row, currentMove.marker2.Column);
+            StackPanel stackPanel1 = (StackPanel)GetGridElement(DraughtsBoard, currentMove.marker1.Row, currentMove.marker1.Column);
+            StackPanel stackPanel2 = (StackPanel)GetGridElement(DraughtsBoard, currentMove.marker2.Row, currentMove.marker2.Column);
             Button button1 = (Button)stackPanel1.Children[0];
             Button button2 = (Button)stackPanel2.Children[0];
             stackPanel1.Background = BoardBlack;
@@ -411,11 +430,11 @@ namespace Checkers
                     Marker middleMarker = currentMove.checkJumps("WhiteKing");
                     if ((middleMarker != null) && (!button2.Name.Contains("White")) && (!button2.Name.Contains("Black")))
                     {
-                        StackPanel middleStackPanel = (StackPanel)GetGridElement(CheckersGrid, middleMarker.Row, middleMarker.Column);
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, middleMarker.Row, middleMarker.Column);
                         Button middleButton = (Button)middleStackPanel.Children[0];
                         if (middleButton.Name.Contains("Black"))
                         {
-                            CheckersGrid.Children.Remove(middleStackPanel);
+                            DraughtsBoard.Children.Remove(middleStackPanel);
                             addWhiteButton(middleMarker);
                             return true;
                         }
@@ -429,11 +448,11 @@ namespace Checkers
                     Marker middlePiece = currentMove.checkJumps("White");
                     if ((middlePiece != null) && (!button2.Name.Contains("White")) && (!button2.Name.Contains("Black")))
                     {
-                        StackPanel middleStackPanel = (StackPanel)GetGridElement(CheckersGrid, middlePiece.Row, middlePiece.Column);
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, middlePiece.Row, middlePiece.Column);
                         Button middleButton = (Button)middleStackPanel.Children[0];
                         if (middleButton.Name.Contains("Black"))
                         {
-                            CheckersGrid.Children.Remove(middleStackPanel);
+                            DraughtsBoard.Children.Remove(middleStackPanel);
                             addWhiteButton(middlePiece);
                             return true;
                         }
@@ -461,7 +480,7 @@ namespace Checkers
             stackPanel.Children.Add(button);
             Grid.SetColumn(stackPanel, middleMove.Column);
             Grid.SetRow(stackPanel, middleMove.Row);
-            CheckersGrid.Children.Add(stackPanel);
+            DraughtsBoard.Children.Add(stackPanel);
         }
         private void kingMeWhite()
         {
@@ -503,11 +522,11 @@ namespace Checkers
                     Marker middlePiece = currentMove.checkJumps("King");
                     if ((middlePiece != null) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
                     {
-                        StackPanel middleStackPanel = (StackPanel)GetGridElement(CheckersGrid, middlePiece.Row, middlePiece.Column);
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, middlePiece.Row, middlePiece.Column);
                         Button middleButton = (Button)middleStackPanel.Children[0];
                         if (middleButton.Name.Contains("White"))
                         {
-                            CheckersGrid.Children.Remove(middleStackPanel);
+                            DraughtsBoard.Children.Remove(middleStackPanel);
                             addBlackButton(middlePiece);
                             return true;
                         }
@@ -520,11 +539,11 @@ namespace Checkers
                     Marker middlePiece = currentMove.checkJumps("Black");
                     if ((middlePiece != null) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
                     {
-                        StackPanel middleStackPanel = (StackPanel)GetGridElement(CheckersGrid, middlePiece.Row, middlePiece.Column);
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, middlePiece.Row, middlePiece.Column);
                         Button middleButton = (Button)middleStackPanel.Children[0];
                         if (middleButton.Name.Contains("White"))
                         {
-                            CheckersGrid.Children.Remove(middleStackPanel);
+                            DraughtsBoard.Children.Remove(middleStackPanel);
                             addBlackButton(middlePiece);
                             return true;
                         }
@@ -552,30 +571,9 @@ namespace Checkers
             stackPanel.Children.Add(button);
             Grid.SetColumn(stackPanel, middleMove.Column);
             Grid.SetRow(stackPanel, middleMove.Row);
-            CheckersGrid.Children.Add(stackPanel);
+            DraughtsBoard.Children.Add(stackPanel);
         }
-        private void kingMeBlack(Marker middleMove)
-        {
-            var BlackKingBrush = new ImageBrush();
-            BlackKingBrush.ImageSource = new BitmapImage(new Uri("Resources/BlackKingMarker.png", UriKind.Relative));
-            var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Background = BoardBlack;
-            Button button = new Button();
-            button.Click += new RoutedEventHandler(Button_Click);
-            button.Height = 60;
-            button.Width = 60;
-            button.HorizontalAlignment = HorizontalAlignment.Center;
-            button.VerticalAlignment = VerticalAlignment.Center;
-            button.Background = BoardBlack;
-            button.Name = "button" + "BlackKing" + middleMove.Row + middleMove.Column;
-            stackPanel.Children.Add(button);
-            Grid.SetColumn(stackPanel, middleMove.Column);
-            Grid.SetRow(stackPanel, middleMove.Row);
-            CheckersGrid.Children.Add(stackPanel);
-
-
-        }
+        
 
         private Checkers_Board GetBoard()
         {
@@ -584,7 +582,7 @@ namespace Checkers
             {
                 for (int column = 0; column < 8; column++)
                 {
-                    StackPanel stackPanel = (StackPanel)GetGridElement(CheckersGrid, row, column);
+                    StackPanel stackPanel = (StackPanel)GetGridElement(DraughtsBoard, row, column);
                     if (stackPanel.Children.Count > 0)
                     {
                         Button button = (Button)stackPanel.Children[0];
@@ -703,6 +701,9 @@ namespace Checkers
             winnermusic.Play();
             MessageBox.Show("Undo Test");
         }
+
+        
+            
 
        
     }

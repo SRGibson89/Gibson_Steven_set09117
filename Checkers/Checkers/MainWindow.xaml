@@ -26,7 +26,9 @@
         <KeyBinding Key="F4" Modifiers="Alt" Command="{StaticResource Exit}"/>
     </Window.InputBindings>
 
-    <Grid x:Name="CheckersGrid">
+    <Grid x:Name="DraughtsBoard">
+       
+               
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60"/>
             <ColumnDefinition Width="60"/>
