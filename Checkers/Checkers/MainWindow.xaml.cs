@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -30,23 +31,24 @@ namespace Checkers
         public int numPlayers = 2;
         System.Media.SoundPlayer winnermusic = new System.Media.SoundPlayer(@"Resources/Winner.wav");
         System.Media.SoundPlayer backgroundmusic = new System.Media.SoundPlayer(@"Resources/Background.wav");
-        
+        Stack Undo_Stack = new Stack();
 
-        
+
+
         public MainWindow()
         {
             InitializeComponent();
             this.Title = "Draughts";
             BuildBoard();
-            
+
         }
 
         private void BuildBoard()
         {
             var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
             var BoardWhite = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFF7");
-    
-            
+
+
             for (int row = 1; row < 9; row++)
             {
                 for (int column = 0; column < 8; column++)
@@ -165,13 +167,13 @@ namespace Checkers
                 }
             }
         }
-   
 
 
-        
-        
-        
-        
+
+
+
+
+
 
         UIElement GetGridElement(Grid grid, int row, int column)
         {
@@ -223,7 +225,7 @@ namespace Checkers
                         MakeMove();
                         // aiturn();
                     }
-                    
+
                 }
                 else if (numPlayers == 2)
                 {
@@ -234,16 +236,17 @@ namespace Checkers
                         {
                             turn = "White";
                             lblturn.Content = playername1 + " Turn!";
-                           
+
                         }
                         else if (turn == "White")
                         {
                             turn = "Black";
                             lblturn.Content = playername2 + " Turn!";
-                            
+
                         }
-                    }
                         
+                    }
+
                 }
             }
         }
@@ -264,11 +267,12 @@ namespace Checkers
                 Grid.SetRow(stackPanel2, currentMove.marker1.Row);
                 Grid.SetColumn(stackPanel2, currentMove.marker1.Column);
                 DraughtsBoard.Children.Add(stackPanel2);
+                Undo_Stack.Push(currentMove.marker1);
                 KingMe(currentMove.marker2);
                 currentMove = null;
-                
+
             }
-            
+
             CheckforWinnner();
         }
 
@@ -293,7 +297,7 @@ namespace Checkers
                         button.Background = WhiteKingBrush;
                     }
                 }
-                //black marker gets to ther side the board
+                //black marker gets to their side of the board
                 if (marker.Row == 1)
                 {
                     if ((button.Name.Contains("Black")) && (!button.Name.Contains("BlackKing")))
@@ -311,7 +315,7 @@ namespace Checkers
 
             for (int row = 1; row < 9; row++)
             {
-                
+
                 for (int column = 0; column < 8; column++)
                 {
                     StackPanel stackPanel = (StackPanel)GetGridElement(DraughtsBoard, row, column);
@@ -325,8 +329,8 @@ namespace Checkers
                     }
                 }
             }
-           
-            if (Whites == 0 )
+
+            if (Whites == 0)
             {
                 winner = "Black";
                 winnermusic.Play();
@@ -337,7 +341,7 @@ namespace Checkers
                 }
             }
 
-            if (Blacks == 0 )
+            if (Blacks == 0)
             {
                 winner = "White";
                 winnermusic.Play();
@@ -365,14 +369,14 @@ namespace Checkers
             {
                 currentMove.marker1 = null;
                 currentMove.marker2 = null;
-                showError("It is "+ playername1 +" turn.");
+                showError("It is " + playername1 + " turn.");
                 return false;
             }
             if ((turn == "Black") && (button1.Name.Contains("White")))
             {
                 currentMove.marker1 = null;
                 currentMove.marker2 = null;
-                showError("It is "+ playername2 +" turn.");
+                showError("It is " + playername2 + " turn.");
                 return false;
             }
             if (button1.Equals(button2))
@@ -438,7 +442,7 @@ namespace Checkers
                             addWhiteButton(middleMarker);
                             return true;
                         }
-                        
+
                     }
                 }
                 else
@@ -482,13 +486,7 @@ namespace Checkers
             Grid.SetRow(stackPanel, middleMove.Row);
             DraughtsBoard.Children.Add(stackPanel);
         }
-        private void kingMeWhite()
-        {
-
-            var WhiteBrush = new ImageBrush();
-            WhiteBrush.ImageSource = new BitmapImage(new Uri("Resources/WhiteMarker.png", UriKind.Relative));
-       }
-
+        
 
         private bool CheckMoveBlack(Button button1, Button button2)
         {
@@ -566,14 +564,14 @@ namespace Checkers
             button.Width = 60;
             button.HorizontalAlignment = HorizontalAlignment.Center;
             button.VerticalAlignment = VerticalAlignment.Center;
-            button.Background =BoardBlack;
+            button.Background = BoardBlack;
             button.Name = "button" + middleMove.Row + middleMove.Column;
             stackPanel.Children.Add(button);
             Grid.SetColumn(stackPanel, middleMove.Column);
             Grid.SetRow(stackPanel, middleMove.Row);
             DraughtsBoard.Children.Add(stackPanel);
         }
-        
+
 
         private Checkers_Board GetBoard()
         {
@@ -626,19 +624,19 @@ namespace Checkers
 
         private void help_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("\b To Play \n"+
-                "The object of the game is to capture all of your opponent's pieces or block them so they cannot be moved.\n"+
-                "Pieces are always moved diagonally, 1 square at a time, towards the opponent's side of the board.\n"+
-                "You play the entire game on the black squares, you do not need the white ones.\n\n"+
-                "\b Capturing \n"+
-                "You can capture an enemy piece by hopping over it.\n"+
-                "Capturing is also done on the diagonal.\n"+
-                "You have to jump from the square directly next to your target and land on the square just beyond it.\n"+
-                "Your landing square must be vacant.\n"+
-                "The piece captured is removed from the board.\n" + 
-                "If you are able to make a move that results in a capture then you must\n\n"+
-                "\b To Win\n"+
-                "Capture all your opponents pieces.","How To Play");
+            MessageBox.Show("\b To Play \n" +
+                "The object of the game is to capture all of your opponent's pieces or block them so they cannot be moved.\n" +
+                "Pieces are always moved diagonally, 1 square at a time, towards the opponent's side of the board.\n" +
+                "You play the entire game on the black squares, you do not need the white ones.\n\n" +
+                "\b Capturing \n" +
+                "You can capture an enemy piece by hopping over it.\n" +
+                "Capturing is also done on the diagonal.\n" +
+                "You have to jump from the square directly next to your target and land on the square just beyond it.\n" +
+                "Your landing square must be vacant.\n" +
+                "The piece captured is removed from the board.\n" +
+                "If you are able to make a move that results in a capture then you must\n\n" +
+                "\b To Win\n" +
+                "Capture all your opponents pieces.", "How To Play");
         }
 
         private void option_Click(object sender, RoutedEventArgs e)
@@ -651,24 +649,24 @@ namespace Checkers
                 backgroundmusic.Play();
 
             }
-            if(optionwindow.playbackground == false)
+            if (optionwindow.playbackground == false)
             {
                 backgroundmusic.Stop();
             }
             if (numPlayers != optionwindow.numberOfPlayers)
             {
-                var result = MessageBox.Show("Changing number of players will restart the game \nDo you want to continue?", "Warning", MessageBoxButton.YesNo,MessageBoxImage.Warning,MessageBoxResult.No);
+                var result = MessageBox.Show("Changing number of players will restart the game \nDo you want to continue?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
                 if (result == MessageBoxResult.Yes)
                 {
                     numPlayers = optionwindow.numberOfPlayers;
                     newGame();
                 }
-                
+
             }
-            
+
             playername1 = optionwindow.txtp1.Text;
             playername2 = optionwindow.txtp2.Text;
-            
+
         }
 
         private void newGame()
@@ -680,12 +678,12 @@ namespace Checkers
                 turn = "Black";
                 lblturn.Content = playername2 + " Turn!";
             }
-            else if ((winner == "Black") || winner == null )
+            else if ((winner == "Black") || winner == null)
             {
                 turn = "White";
                 lblturn.Content = playername1 + " Turn!";
             }
-            
+
             //MessageBox.Show("New Game Test");
             //MessageBox.Show("number of player"+numPlayers.ToString());
             //MessageBox.Show("player 1 name: " + playername1 +"\nPlayer 2 name: "+playername2);
@@ -698,14 +696,27 @@ namespace Checkers
 
         private void undo_Click(object sender, RoutedEventArgs e)
         {
-            winnermusic.Play();
-            MessageBox.Show("Undo Test");
+            if (Undo_Stack.Count == 0)
+            {
+                showError("No Moves to undo");
+            }
+            else
+            {
+                
+                }
+            //MessageBox.Show("Undo Test");
         }
 
-        
-            
+        private void List_Moves()
+        {
+            // Creates and initializes a new Stack.
 
-       
+            Undo_Stack.Push("Hello");
+            Undo_Stack.Push("World");
+            Undo_Stack.Push("!");
+
+
+        }
     }
-
 }
+
