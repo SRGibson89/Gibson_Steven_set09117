@@ -12,15 +12,7 @@ namespace Checkers
     // a list will be used in replays
     class History
     {
-        public void Undo()
-        {
-            // Creates and initializes a new Stack.
-            Stack undo = new Stack();
-        }
-       
-       
-        
-        
+               
 
     }
 }

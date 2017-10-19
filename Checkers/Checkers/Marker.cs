@@ -10,11 +10,19 @@ namespace Checkers
     {
         public int Row { get; set; }
         public int Column { get; set; }
+        public bool Kinged { get; set; }
 
         public Marker(int row, int column)
         {
             this.Row = row;
             this.Column = column;
+            this.Kinged = false;
+        }
+        public Marker(int row, int column,bool kinged)
+        {
+            this.Row = row;
+            this.Column = column;
+            this.Kinged = kinged;
         }
 
         public override bool Equals(System.Object obj)
