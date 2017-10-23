@@ -88,7 +88,7 @@ namespace Checkers {
             case 1:
             
             #line 15 "..\..\MainWindow.xaml"
-            ((System.Windows.Input.CommandBinding)(target)).Executed += new System.Windows.Input.ExecutedRoutedEventHandler(this.Help_Click);
+            ((System.Windows.Input.CommandBinding)(target)).Executed += new System.Windows.Input.ExecutedRoutedEventHandler(this.help_Click);
             
             #line default
             #line hidden
@@ -96,7 +96,7 @@ namespace Checkers {
             case 2:
             
             #line 16 "..\..\MainWindow.xaml"
-            ((System.Windows.Input.CommandBinding)(target)).Executed += new System.Windows.Input.ExecutedRoutedEventHandler(this.Option_Click);
+            ((System.Windows.Input.CommandBinding)(target)).Executed += new System.Windows.Input.ExecutedRoutedEventHandler(this.option_Click);
             
             #line default
             #line hidden
@@ -120,7 +120,7 @@ namespace Checkers {
             case 5:
             
             #line 19 "..\..\MainWindow.xaml"
-            ((System.Windows.Input.CommandBinding)(target)).Executed += new System.Windows.Input.ExecutedRoutedEventHandler(this.Exit_Click);
+            ((System.Windows.Input.CommandBinding)(target)).Executed += new System.Windows.Input.ExecutedRoutedEventHandler(this.exit_Click);
             
             #line default
             #line hidden
@@ -139,7 +139,7 @@ namespace Checkers {
             case 8:
             
             #line 57 "..\..\MainWindow.xaml"
-            ((System.Windows.Controls.MenuItem)(target)).Click += new System.Windows.RoutedEventHandler(this.Exit_Click);
+            ((System.Windows.Controls.MenuItem)(target)).Click += new System.Windows.RoutedEventHandler(this.exit_Click);
             
             #line default
             #line hidden
@@ -155,7 +155,7 @@ namespace Checkers {
             case 10:
             
             #line 61 "..\..\MainWindow.xaml"
-            ((System.Windows.Controls.MenuItem)(target)).Click += new System.Windows.RoutedEventHandler(this.Option_Click);
+            ((System.Windows.Controls.MenuItem)(target)).Click += new System.Windows.RoutedEventHandler(this.option_Click);
             
             #line default
             #line hidden
@@ -163,7 +163,7 @@ namespace Checkers {
             case 11:
             
             #line 64 "..\..\MainWindow.xaml"
-            ((System.Windows.Controls.MenuItem)(target)).Click += new System.Windows.RoutedEventHandler(this.Help_Click);
+            ((System.Windows.Controls.MenuItem)(target)).Click += new System.Windows.RoutedEventHandler(this.help_Click);
             
             #line default
             #line hidden

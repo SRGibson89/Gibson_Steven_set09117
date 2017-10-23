@@ -32,6 +32,7 @@ namespace Checkers
         System.Media.SoundPlayer winnermusic = new System.Media.SoundPlayer(@"Resources/Winner.wav");
         System.Media.SoundPlayer backgroundmusic = new System.Media.SoundPlayer(@"Resources/Background.wav");
         Stack Undo_Stack = new Stack();
+        Stack Taken_Stack = new Stack();
 
 
 
@@ -40,6 +41,7 @@ namespace Checkers
             InitializeComponent();
             this.Title = "Draughts";
             BuildBoard();
+            changeTurn();
 
         }
 
@@ -276,8 +278,6 @@ namespace Checkers
 
         private void addToUndo(Marker markerbefore, Marker markerafter)
         {
-            //StackPanel stackPanelBefore = (StackPanel)GetGridElement(DraughtsBoard, markerbefore.Row, markerbefore.Column);
-            //StackPanel stackPanelAfter = (StackPanel)GetGridElement(DraughtsBoard, markerafter.Row, markerafter.Column);
             Undo_Stack.Push(markerbefore.Row);
             Undo_Stack.Push(markerbefore.Column);
             Undo_Stack.Push(markerbefore.Kinged);
@@ -309,7 +309,7 @@ namespace Checkers
                         marker.Kinged = true;
                     }
                 }
-                //black marker gets to their side of the board
+                //black marker gets to the other side of the board
                 if (marker.Row == 1)
                 {
                     if ((button.Name.Contains("Black")) && (!button.Name.Contains("BlackKing")))
@@ -451,7 +451,12 @@ namespace Checkers
                         if (middleButton.Name.Contains("Black"))
                         {
                             DraughtsBoard.Children.Remove(middleStackPanel);
-                            RemoveWhiteButton(middleMarker);
+                            Console.WriteLine("Button name" + middleButton.Name);
+                            if (middleButton.Name.Contains("BlackKing"))
+                            {
+                                middleMarker.Kinged = true;
+                            }
+                            RemoveMarker(middleMarker);
                             return true;
                         }
 
@@ -469,7 +474,12 @@ namespace Checkers
                         if (middleButton.Name.Contains("Black"))
                         {
                             DraughtsBoard.Children.Remove(middleStackPanel);
-                            RemoveWhiteButton(middleMarker);
+                            Console.WriteLine("Button name" + middleButton.Name);
+                            if (middleButton.Name.Contains("BlackKing"))
+                            {
+                                middleMarker.Kinged = true;
+                            }
+                            RemoveMarker(middleMarker);
                             return true;
                         }
                     }
@@ -480,8 +490,13 @@ namespace Checkers
             return false;
         }
 
-        private void RemoveWhiteButton(Marker middleMove)
+        private void RemoveMarker(Marker middleMove)
         {
+            Taken_Stack.Push(middleMove.Row);
+            Taken_Stack.Push(middleMove.Column);
+            Taken_Stack.Push(middleMove.Kinged);
+            
+            Console.WriteLine("was it a king?"+middleMove.Kinged);
             var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
             StackPanel stackPanel = new StackPanel();
             stackPanel.Background = BoardBlack;
@@ -528,15 +543,20 @@ namespace Checkers
                 {
                     if ((currentMove.ValidMove("BlackKing")) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
                         return true;
-                    Marker middlePiece = currentMove.checkJumps("King");
-                    if ((middlePiece != null) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
+                    Marker middleMarker = currentMove.checkJumps("King");
+                    if ((middleMarker != null) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
                     {
-                        StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, middlePiece.Row, middlePiece.Column);
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, middleMarker.Row, middleMarker.Column);
                         Button middleButton = (Button)middleStackPanel.Children[0];
                         if (middleButton.Name.Contains("White"))
                         {
                             DraughtsBoard.Children.Remove(middleStackPanel);
-                            RemoveBlackButton(middlePiece);
+                            Console.WriteLine("Button name" + middleButton.Name);
+                            if (middleButton.Name.Contains("WhiteKing"))
+                            {
+                                middleMarker.Kinged = true;
+                            }
+                            RemoveMarker(middleMarker);
                             return true;
                         }
                     }
@@ -545,15 +565,20 @@ namespace Checkers
                 {
                     if ((currentMove.ValidMove("Black")) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
                         return true;
-                    Marker middlePiece = currentMove.checkJumps("Black");
-                    if ((middlePiece != null) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
+                    Marker middleMarker = currentMove.checkJumps("Black");
+                    if ((middleMarker != null) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
                     {
-                        StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, middlePiece.Row, middlePiece.Column);
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, middleMarker.Row, middleMarker.Column);
                         Button middleButton = (Button)middleStackPanel.Children[0];
                         if (middleButton.Name.Contains("White"))
                         {
                             DraughtsBoard.Children.Remove(middleStackPanel);
-                            RemoveBlackButton(middlePiece);
+                            Console.WriteLine("Button name" + middleButton.Name);
+                            if (middleButton.Name.Contains("WhiteKing"))
+                            {
+                                middleMarker.Kinged = true;
+                            }
+                            RemoveMarker(middleMarker);
                             return true;
                         }
                     }
@@ -564,25 +589,6 @@ namespace Checkers
             return false;
         }
 
-
-        private void RemoveBlackButton(Marker middleMove)
-        {
-            var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Background = BoardBlack;
-            Button button = new Button();
-            button.Click += new RoutedEventHandler(Button_Click);
-            button.Height = 60;
-            button.Width = 60;
-            button.HorizontalAlignment = HorizontalAlignment.Center;
-            button.VerticalAlignment = VerticalAlignment.Center;
-            button.Background = BoardBlack;
-            button.Name = "button" + middleMove.Row + middleMove.Column;
-            stackPanel.Children.Add(button);
-            Grid.SetColumn(stackPanel, middleMove.Column);
-            Grid.SetRow(stackPanel, middleMove.Row);
-            DraughtsBoard.Children.Add(stackPanel);
-        }
         
         private Checkers_Board GetBoard()
         {
@@ -746,18 +752,17 @@ namespace Checkers
                 {
                     if (turn == "Black")
                     {
-                        Marker takenMarker = new Marker(markerAfter.Row-1, markerAfter.Column);
-                        int columnfinder = (markerAfter.Column - markerBefore.Column);
-                        Console.WriteLine("Columnfinder" + columnfinder);
-                        if (columnfinder == -2)
-                        {
-                            takenMarker.Column = markerAfter.Column + 1;
-                        }
-                        else if (columnfinder==2)
-                        {
-                            takenMarker.Column = markerAfter.Column - 1;
-                        }
-                        Console.WriteLine("taken marker row :"+ takenMarker.Row);
+                        bool king = (bool)Taken_Stack.Pop();
+                        int column = (int)Taken_Stack.Pop();
+                        int row = (int)Taken_Stack.Pop();
+                        
+                        
+                        Marker takenMarker = new Marker(row, column,king);
+                        
+                        
+                        Console.WriteLine("Kinged?" + takenMarker.Kinged);
+                        
+                        Console.WriteLine("taken marker row :" + takenMarker.Row);
                         StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, takenMarker.Row, takenMarker.Column);
                         Button middleButton = (Button)middleStackPanel.Children[0];
                         DraughtsBoard.Children.Remove(middleStackPanel);
@@ -765,17 +770,11 @@ namespace Checkers
                     }
                     if (turn == "White")
                     {
-                        Marker takenMarker = new Marker(markerAfter.Row + 1, markerAfter.Column);
-                        int columnfinder = (markerAfter.Column - markerBefore.Column);
-                        Console.WriteLine("Columnfinder" + columnfinder);
-                        if (columnfinder == -2)
-                        {
-                            takenMarker.Column = markerAfter.Column + 1;
-                        }
-                        else if (columnfinder == 2)
-                        {
-                            takenMarker.Column = markerAfter.Column - 1;
-                        }
+                        bool king = (bool)Taken_Stack.Pop();
+                        int column = (int)Taken_Stack.Pop();
+                        int row = (int)Taken_Stack.Pop();
+                        Marker takenMarker = new Marker(row, column, king);
+                        Console.WriteLine("Kinged?" + takenMarker.Kinged);
                         Console.WriteLine("taken marker row :" + takenMarker.Row);
                         StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, takenMarker.Row, takenMarker.Column);
                         Button middleButton = (Button)middleStackPanel.Children[0];
@@ -831,10 +830,19 @@ namespace Checkers
             button.VerticalAlignment = VerticalAlignment.Center;
             button.Background = WhiteBrush;
             button.Name = "button" + "White" + takenMarker.Row + takenMarker.Column;
+            if (takenMarker.Kinged == true)
+            {
+                var WhiteKingBrush = new ImageBrush();
+                WhiteKingBrush.ImageSource = new BitmapImage(new Uri("Resources/WhiteKingMarker.png", UriKind.Relative));
+                button.Background = WhiteKingBrush;
+                button.Name = "button" + "White" + "WhiteKing"+ takenMarker.Row + takenMarker.Column;
+            }
+            
             stackPanel.Children.Add(button);
             Grid.SetColumn(stackPanel, takenMarker.Column);
             Grid.SetRow(stackPanel, takenMarker.Row);
             DraughtsBoard.Children.Add(stackPanel);
+            
             
         }
         private void addBlackButton(Marker takenMarker)
@@ -852,6 +860,13 @@ namespace Checkers
             button.VerticalAlignment = VerticalAlignment.Center;
             button.Background = BlackBrush;
             button.Name = "button" +"Black"+ takenMarker.Row + takenMarker.Column;
+            if (takenMarker.Kinged == true)
+            {
+                var BlackKingBrush = new ImageBrush();
+                BlackKingBrush.ImageSource = new BitmapImage(new Uri("Resources/BlackKingMarker.png", UriKind.Relative));
+                button.Name = "button" + "Black" + "BlackKing" + takenMarker.Row + takenMarker.Column;
+                button.Background = BlackKingBrush;
+            }
             stackPanel.Children.Add(button);
             Grid.SetColumn(stackPanel, takenMarker.Column);
             Grid.SetRow(stackPanel, takenMarker.Row);

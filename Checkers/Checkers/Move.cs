@@ -63,17 +63,7 @@ namespace Checkers
                 if ((marker1.Row + 1 == marker2.Row) && (marker1.Column + 1 == marker2.Column))
                     return true;
             }
-            //if (colour == "King")
-            //{
-            //    if ((marker1.Row - 1 == marker2.Row) && (marker1.Column - 1 == marker2.Column))
-            //        return true;
-            //    if ((marker1.Row - 1 == marker2.Row) && (marker1.Column + 1 == marker2.Column))
-            //        return true;
-            //    if ((marker1.Row + 1 == marker2.Row) && (marker1.Column - 1 == marker2.Column))
-            //        return true;
-            //    if ((marker1.Row + 1 == marker2.Row) && (marker1.Column + 1 == marker2.Column))
-            //        return true;
-            //}
+            
 
 
             return false;
