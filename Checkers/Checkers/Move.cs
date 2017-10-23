@@ -84,6 +84,7 @@ namespace Checkers
                     return new Marker(marker1.Row + 1, marker1.Column - 1);
                 if ((marker1.Row + 2 == marker2.Row) && (marker1.Column + 2 == marker2.Column))
                     return new Marker(marker1.Row + 1, marker1.Column + 1);
+
             }
             if (colour == "BlackKing")
             {
@@ -91,8 +92,12 @@ namespace Checkers
                     return new Marker(marker1.Row - 1, marker1.Column - 1);
                 if ((marker1.Row - 2 == marker2.Row) && (marker1.Column + 2 == marker2.Column))
                     return new Marker(marker1.Row - 1, marker1.Column + 1);
+                //if ((marker1.Row + 2 == marker2.Row) && (marker1.Column - 2 == marker2.Column))
+                //    return new Marker(marker1.Row - 1, marker1.Column - 1);
+                //if ((marker1.Row + 2 == marker2.Row) && (marker1.Column + 2 == marker2.Column))
+                //    return new Marker(marker1.Row + 1, marker1.Column + 1);
                 if ((marker1.Row + 2 == marker2.Row) && (marker1.Column - 2 == marker2.Column))
-                    return new Marker(marker1.Row - 1, marker1.Column - 1);
+                    return new Marker(marker1.Row + 1, marker1.Column - 1);
                 if ((marker1.Row + 2 == marker2.Row) && (marker1.Column + 2 == marker2.Column))
                     return new Marker(marker1.Row + 1, marker1.Column + 1);
             }

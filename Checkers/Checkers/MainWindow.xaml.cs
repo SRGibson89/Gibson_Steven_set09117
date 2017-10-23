@@ -543,7 +543,7 @@ namespace Checkers
                 {
                     if ((currentMove.ValidMove("BlackKing")) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
                         return true;
-                    Marker middleMarker = currentMove.checkJumps("King");
+                    Marker middleMarker = currentMove.checkJumps("BlackKing");
                     if ((middleMarker != null) && (!button2.Name.Contains("Black")) && (!button2.Name.Contains("White")))
                     {
                         StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, middleMarker.Row, middleMarker.Column);
