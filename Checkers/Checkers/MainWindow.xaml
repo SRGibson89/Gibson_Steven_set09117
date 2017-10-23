@@ -9,6 +9,7 @@
         <RoutedUICommand x:Key="Options" Text="Options" />
         <RoutedUICommand x:Key="New_Game" Text="New Game" />
         <RoutedUICommand x:Key="Undo" Text="Undo" />
+        <RoutedUICommand x:Key="Redo" Text="Redo" />
         <RoutedUICommand x:Key="Exit" Text="Exit" />
     </Window.Resources>
     <Window.CommandBindings>
@@ -16,6 +17,7 @@
         <CommandBinding Command="{StaticResource Options}" Executed="option_Click" />
         <CommandBinding Command="{StaticResource New_Game}" Executed="newGame_Click" />
         <CommandBinding Command="{StaticResource Undo}" Executed="undo_Click" />
+        <CommandBinding Command="{StaticResource Redo}" Executed="redo_Click" />
         <CommandBinding Command="{StaticResource Exit}" Executed="exit_Click" />
     </Window.CommandBindings>
     <Window.InputBindings>
@@ -23,6 +25,7 @@
         <KeyBinding Key="F2" Command="{StaticResource New_Game}" />
         <KeyBinding Key="O" Modifiers="Ctrl" Command="{StaticResource Options}" />
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{StaticResource Undo}" />
+        <KeyBinding Key="Y" Modifiers="Ctrl" Command="{StaticResource Redo}" />
         <KeyBinding Key="F4" Modifiers="Alt" Command="{StaticResource Exit}"/>
     </Window.InputBindings>
 
@@ -58,6 +61,7 @@
             </MenuItem>
             <MenuItem Header="_Edit">
                 <MenuItem Header="_Undo" Click="undo_Click" InputGestureText="Ctrl + Z"/>
+                <MenuItem Header="_Redo" Click="redo_Click" InputGestureText="Ctrl + Y"/>
                 <MenuItem Header="_Options" Click="option_Click" InputGestureText="Ctrl + O"/>
             </MenuItem>
             <MenuItem Header="_Help">

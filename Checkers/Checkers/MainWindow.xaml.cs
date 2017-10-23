@@ -33,6 +33,8 @@ namespace Checkers
         System.Media.SoundPlayer backgroundmusic = new System.Media.SoundPlayer(@"Resources/Background.wav");
         Stack Undo_Stack = new Stack();
         Stack Taken_Stack = new Stack();
+        Stack Redo_Stack = new Stack();
+        Stack ReTaken_Stack = new Stack();
 
 
 
@@ -265,10 +267,10 @@ namespace Checkers
                 Grid.SetRow(stackPanel2, currentMove.marker1.Row);
                 Grid.SetColumn(stackPanel2, currentMove.marker1.Column);
                 DraughtsBoard.Children.Add(stackPanel2);
-                
+
                 KingMe(currentMove.marker2);
-                addToUndo(currentMove.marker1,currentMove.marker2);
-                
+                addToUndo(currentMove.marker1, currentMove.marker2);
+
                 currentMove = null;
 
             }
@@ -495,8 +497,8 @@ namespace Checkers
             Taken_Stack.Push(middleMove.Row);
             Taken_Stack.Push(middleMove.Column);
             Taken_Stack.Push(middleMove.Kinged);
-            
-            Console.WriteLine("was it a king?"+middleMove.Kinged);
+
+            Console.WriteLine("was it a king?" + middleMove.Kinged);
             var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
             StackPanel stackPanel = new StackPanel();
             stackPanel.Background = BoardBlack;
@@ -589,7 +591,7 @@ namespace Checkers
             return false;
         }
 
-        
+
         private Checkers_Board GetBoard()
         {
             Checkers_Board board = new Checkers_Board();
@@ -713,7 +715,7 @@ namespace Checkers
 
         private void undo_Click(object sender, RoutedEventArgs e)
         {
-            
+
             if (Undo_Stack.Count == 0)
             {
                 showError("No Moves to undo");
@@ -721,20 +723,20 @@ namespace Checkers
             else
             {
                 bool afterKing = (bool)Undo_Stack.Pop();
-                int afterColumn = (int) Undo_Stack.Pop();
-                int afterRow = (int) Undo_Stack.Pop();
+                int afterColumn = (int)Undo_Stack.Pop();
+                int afterRow = (int)Undo_Stack.Pop();
                 bool beforeKing = (bool)Undo_Stack.Pop();
-                int beforeColumn = (int) Undo_Stack.Pop();
-                int beforeRow = (int) Undo_Stack.Pop();
+                int beforeColumn = (int)Undo_Stack.Pop();
+                int beforeRow = (int)Undo_Stack.Pop();
 
                 Console.WriteLine("After Column " + afterColumn
-                                 +"\nAfter Row " + afterRow
-                                 +"\nAfter King "+afterKing
+                                 + "\nAfter Row " + afterRow
+                                 + "\nAfter King " + afterKing
                                  + "\nBefore Column " + beforeColumn
                                  + "\nBefore Row " + beforeRow
-                                 + "\nBefore Kinged " +beforeKing);
-                Marker markerBefore = new Marker(beforeRow, beforeColumn,beforeKing);
-                Marker markerAfter = new Marker(afterRow, afterColumn,afterKing);
+                                 + "\nBefore Kinged " + beforeKing);
+                Marker markerBefore = new Marker(beforeRow, beforeColumn, beforeKing);
+                Marker markerAfter = new Marker(afterRow, afterColumn, afterKing);
                 undoMove(markerBefore, markerAfter);
                 changeTurn();
             }
@@ -746,22 +748,22 @@ namespace Checkers
             if ((markerBefore != null) && (markerAfter != null))
             {
                 int jumpCheck = (markerBefore.Row - markerAfter.Row);
-                
+
                 Console.WriteLine("Jump check = " + jumpCheck);
-                if ((jumpCheck == -2) ||(jumpCheck==2))
+                if ((jumpCheck == -2) || (jumpCheck == 2))
                 {
                     if (turn == "Black")
                     {
                         bool king = (bool)Taken_Stack.Pop();
                         int column = (int)Taken_Stack.Pop();
                         int row = (int)Taken_Stack.Pop();
-                        
-                        
-                        Marker takenMarker = new Marker(row, column,king);
-                        
-                        
+
+
+                        Marker takenMarker = new Marker(row, column, king);
+
+
                         Console.WriteLine("Kinged?" + takenMarker.Kinged);
-                        
+
                         Console.WriteLine("taken marker row :" + takenMarker.Row);
                         StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, takenMarker.Row, takenMarker.Column);
                         Button middleButton = (Button)middleStackPanel.Children[0];
@@ -806,17 +808,25 @@ namespace Checkers
                     buttonafter.Background = WhiteBrush;
                 }
                 else if (markerAfter.Kinged == true && markerBefore.Kinged == false && buttonafter.Name.Contains("Black"))
-                    {
-                        buttonafter.Name = "Black" + markerAfter.Row + markerAfter.Column;
-                        buttonafter.Background = BlackBrush;
-                    }
-               
+                {
+                    buttonafter.Name = "Black" + markerAfter.Row + markerAfter.Column;
+                    buttonafter.Background = BlackBrush;
+                }
 
+                Redo_Stack.Push(markerAfter.Row);
+                Redo_Stack.Push(markerAfter.Column);
+                Redo_Stack.Push(markerAfter.Kinged);
+                Redo_Stack.Push(markerBefore.Row);
+                Redo_Stack.Push(markerBefore.Column);
+                Redo_Stack.Push(markerBefore.Kinged);
             }
         }
         // this if for the undo if marker ws taken. readds them to the board
         private void addWhiteButton(Marker takenMarker)
         {
+            ReTaken_Stack.Push(takenMarker.Row);
+            ReTaken_Stack.Push(takenMarker.Column);
+            ReTaken_Stack.Push(takenMarker.Kinged);
             var WhiteBrush = new ImageBrush();
             WhiteBrush.ImageSource = new BitmapImage(new Uri("Resources/WhiteMarker.png", UriKind.Relative));
             var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
@@ -835,18 +845,21 @@ namespace Checkers
                 var WhiteKingBrush = new ImageBrush();
                 WhiteKingBrush.ImageSource = new BitmapImage(new Uri("Resources/WhiteKingMarker.png", UriKind.Relative));
                 button.Background = WhiteKingBrush;
-                button.Name = "button" + "White" + "WhiteKing"+ takenMarker.Row + takenMarker.Column;
+                button.Name = "button" + "White" + "WhiteKing" + takenMarker.Row + takenMarker.Column;
             }
-            
+
             stackPanel.Children.Add(button);
             Grid.SetColumn(stackPanel, takenMarker.Column);
             Grid.SetRow(stackPanel, takenMarker.Row);
             DraughtsBoard.Children.Add(stackPanel);
-            
-            
+
+
         }
         private void addBlackButton(Marker takenMarker)
         {
+            ReTaken_Stack.Push(takenMarker.Row);
+            ReTaken_Stack.Push(takenMarker.Column);
+            ReTaken_Stack.Push(takenMarker.Kinged);
             var BlackBrush = new ImageBrush();
             BlackBrush.ImageSource = new BitmapImage(new Uri("Resources/BlackMarker.png", UriKind.Relative));
             var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
@@ -859,7 +872,7 @@ namespace Checkers
             button.HorizontalAlignment = HorizontalAlignment.Center;
             button.VerticalAlignment = VerticalAlignment.Center;
             button.Background = BlackBrush;
-            button.Name = "button" +"Black"+ takenMarker.Row + takenMarker.Column;
+            button.Name = "button" + "Black" + takenMarker.Row + takenMarker.Column;
             if (takenMarker.Kinged == true)
             {
                 var BlackKingBrush = new ImageBrush();
@@ -872,9 +885,112 @@ namespace Checkers
             Grid.SetRow(stackPanel, takenMarker.Row);
             DraughtsBoard.Children.Add(stackPanel);
         }
-        
+        //redo function
+        private void redo_Click(object sender, RoutedEventArgs e)
+        {
+            if (Redo_Stack.Count == 0)
+            {
+                showError("No Moves to redo");
+            }
+            else
+            {
+                bool afterKing = (bool)Redo_Stack.Pop();
+                int afterColumn = (int)Redo_Stack.Pop();
+                int afterRow = (int)Redo_Stack.Pop();
+                bool beforeKing = (bool)Redo_Stack.Pop();
+                int beforeColumn = (int)Redo_Stack.Pop();
+                int beforeRow = (int)Redo_Stack.Pop();
+
+                Console.WriteLine("After Column " + afterColumn
+                                 + "\nAfter Row " + afterRow
+                                 + "\nAfter King " + afterKing
+                                 + "\nBefore Column " + beforeColumn
+                                 + "\nBefore Row " + beforeRow
+                                 + "\nBefore Kinged " + beforeKing);
+                Marker markerBefore = new Marker(beforeRow, beforeColumn, beforeKing);
+                Marker markerAfter = new Marker(afterRow, afterColumn, afterKing);
+                redoMove(markerBefore, markerAfter);
+                changeTurn();
+            }
+        }
+
+        private void redoMove(Marker markerBefore, Marker markerAfter)
+        {
+            if ((markerBefore != null) && (markerAfter != null))
+            {
+                int jumpCheck = (markerBefore.Row - markerAfter.Row);
+
+                Console.WriteLine("Jump check = " + jumpCheck);
+                if ((jumpCheck == -2) || (jumpCheck == 2))
+                {
+                    if (turn == "Black")
+                    {
+                        bool king = (bool)ReTaken_Stack.Pop();
+                        int column = (int)ReTaken_Stack.Pop();
+                        int row = (int)ReTaken_Stack.Pop();
 
 
-     //end of program!      
+                        Marker takenMarker = new Marker(row, column, king);
+
+
+                        Console.WriteLine("Kinged?" + takenMarker.Kinged);
+
+                        Console.WriteLine("taken marker row :" + takenMarker.Row);
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, takenMarker.Row, takenMarker.Column);
+                        Button middleButton = (Button)middleStackPanel.Children[0];
+                        DraughtsBoard.Children.Remove(middleStackPanel);
+                        RemoveMarker(takenMarker);
+                    }
+                    if (turn == "White")
+                    {
+                        bool king = (bool)ReTaken_Stack.Pop();
+                        int column = (int)ReTaken_Stack.Pop();
+                        int row = (int)ReTaken_Stack.Pop();
+                        Marker takenMarker = new Marker(row, column, king);
+                        Console.WriteLine("Kinged?" + takenMarker.Kinged);
+                        Console.WriteLine("taken marker row :" + takenMarker.Row);
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, takenMarker.Row, takenMarker.Column);
+                        Button middleButton = (Button)middleStackPanel.Children[0];
+                        DraughtsBoard.Children.Remove(middleStackPanel);
+                        RemoveMarker(takenMarker);
+                    }
+                }
+                Console.WriteLine("MarkerBefore " + markerBefore.Row + ", " + markerBefore.Column);
+                Console.WriteLine("MarkerAfter " + markerAfter.Row + ", " + markerAfter.Column);
+                StackPanel stackPanel1 = (StackPanel)GetGridElement(DraughtsBoard, markerBefore.Row, markerBefore.Column);
+                StackPanel stackPanel2 = (StackPanel)GetGridElement(DraughtsBoard, markerAfter.Row, markerAfter.Column);
+                Button buttonbefore = (Button)stackPanel1.Children[0];
+                Button buttonafter = (Button)stackPanel2.Children[0];
+                DraughtsBoard.Children.Remove(stackPanel1);
+                DraughtsBoard.Children.Remove(stackPanel2);
+                Grid.SetRow(stackPanel1, markerAfter.Row);
+                Grid.SetColumn(stackPanel1, markerAfter.Column);
+                DraughtsBoard.Children.Add(stackPanel1);
+                Grid.SetRow(stackPanel2, markerBefore.Row);
+                Grid.SetColumn(stackPanel2, markerBefore.Column);
+                DraughtsBoard.Children.Add(stackPanel2);
+                KingMe(markerBefore);
+                var WhiteBrush = new ImageBrush();
+                WhiteBrush.ImageSource = new BitmapImage(new Uri("Resources/WhiteMarker.png", UriKind.Relative));
+                var BlackBrush = new ImageBrush();
+                BlackBrush.ImageSource = new BitmapImage(new Uri("Resources/BlackMarker.png", UriKind.Relative));
+                if (markerAfter.Kinged == true && markerBefore.Kinged == false && buttonafter.Name.Contains("White"))
+                {
+                    buttonafter.Name = "White" + markerAfter.Row + markerAfter.Column;
+                    buttonafter.Background = WhiteBrush;
+                }
+                else if (markerAfter.Kinged == true && markerBefore.Kinged == false && buttonafter.Name.Contains("Black"))
+                {
+                    buttonafter.Name = "Black" + markerAfter.Row + markerAfter.Column;
+                    buttonafter.Background = BlackBrush;
+                }
+                addToUndo(markerBefore, markerAfter);
+            }
+        }
+    
+
+
+
+        //end of program!      
     }
 }
