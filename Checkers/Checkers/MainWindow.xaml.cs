@@ -193,6 +193,10 @@ namespace Checkers
                     DraughtsBoard.Children.Remove(stackPanel);
                 }
             }
+            Undo_Stack.Clear();
+            Redo_Stack.Clear();
+            Taken_Stack.Clear();
+            ReTaken_Stack.Clear();
         }
 
         public void Button_Click(Object sender, RoutedEventArgs e)
