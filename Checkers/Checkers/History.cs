@@ -12,7 +12,31 @@ namespace Checkers
     // a list will be used in replays
     class History
     {
-               
+        private int id;
+        private string name { get; set; }
+        Queue turns = new Queue();
+
+        public int ID
+        {
+            get { return id; }
+            //referance number will be auto generated
+            set
+            { id = value; }
+
+        }
+        public History()
+        {
+
+        }
+        public History(int I)
+        {
+            id = I;
+        }
+        public History (int I,string N)
+        {
+            id = I;
+            name = N;
+        }
 
     }
 }

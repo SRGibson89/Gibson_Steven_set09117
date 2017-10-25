@@ -35,6 +35,7 @@ namespace Checkers
         Stack Taken_Stack = new Stack();
         Stack Redo_Stack = new Stack();
         Stack ReTaken_Stack = new Stack();
+        SingletonLists Game_List = SingletonLists.Instance;
 
 
 
@@ -274,6 +275,7 @@ namespace Checkers
 
                 KingMe(currentMove.marker2);
                 addToUndo(currentMove.marker1, currentMove.marker2);
+               
 
                 currentMove = null;
 
@@ -696,6 +698,31 @@ namespace Checkers
         {
             Cleaner();
             BuildBoard();
+            //new replay
+            History GameHistory = new History();
+            int refid = 0;
+            if (Game_List.GameList.Count == 0)
+            {
+                refid = refid + 1;
+            }
+            else
+            {
+                foreach (History h_loop in Game_List.GameList)
+                {
+                    if (h_loop.ID >= refid)
+                    {
+                        refid = h_loop.ID + 1;
+                    }
+                    else
+                    {
+                        GameHistory.ID = refid;
+                    }
+                }
+                GameHistory.ID = refid;
+            }
+            
+
+            
             if (winner == "White")
             {
                 turn = "Black";
@@ -990,6 +1017,10 @@ namespace Checkers
                 }
                 addToUndo(markerBefore, markerAfter);
             }
+        }
+        private void addToHistory(Marker markerBefore,Marker markerAfter)
+        {
+
         }
     
 

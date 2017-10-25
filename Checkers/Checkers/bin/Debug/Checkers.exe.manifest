@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Checkers.exe" size="87040">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Checkers.exe" size="89088">
       <assemblyIdentity name="Checkers" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>/ay9RSTE12vEYuyauDT+5t/DQMcgg/Ytn/26Tv+ER7w=</dsig:DigestValue>
+        <dsig:DigestValue>qxKTCrEnHaBabAkjvBT5/j/Fj4vpvvSyjQA+weGcwf4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
