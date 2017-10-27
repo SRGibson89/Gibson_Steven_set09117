@@ -9,19 +9,19 @@ namespace Checkers
 
     class Move
     {
-        public Marker marker1 { get; set; }
-        public Marker marker2 { get; set; }
+        public Marker markerBefore { get; set; }
+        public Marker markerAfter { get; set; }
 
         public Move()
         {
-            this.marker1 = null;
-            this.marker2 = null;
+            this.markerBefore = null;
+            this.markerAfter = null;
         }
 
         public Move(Marker marker1, Marker marker2)
         {
-            this.marker1 = marker1;
-            this.marker2 = marker2;
+            this.markerBefore = marker1;
+            this.markerAfter = marker2;
         }
 
         //vaild move check
@@ -29,38 +29,38 @@ namespace Checkers
         {
             if (colour == "Black")
             {
-                if ((marker1.Row - 1 == marker2.Row) && (marker1.Column - 1 == marker2.Column))
+                if ((markerBefore.Row - 1 == markerAfter.Row) && (markerBefore.Column - 1 == markerAfter.Column))
                     return true;
-                if ((marker1.Row - 1 == marker2.Row) && (marker1.Column + 1 == marker2.Column))
+                if ((markerBefore.Row - 1 == markerAfter.Row) && (markerBefore.Column + 1 == markerAfter.Column))
                     return true;
             }
             if (colour == "White")
             {
-                if ((marker1.Row + 1 == marker2.Row) && (marker1.Column - 1 == marker2.Column))
+                if ((markerBefore.Row + 1 == markerAfter.Row) && (markerBefore.Column - 1 == markerAfter.Column))
                     return true;
-                if ((marker1.Row + 1 == marker2.Row) && (marker1.Column + 1 == marker2.Column))
+                if ((markerBefore.Row + 1 == markerAfter.Row) && (markerBefore.Column + 1 == markerAfter.Column))
                     return true;
             }
             if (colour == "BlackKing")
             {
-                if ((marker1.Row - 1 == marker2.Row) && (marker1.Column - 1 == marker2.Column))
+                if ((markerBefore.Row - 1 == markerAfter.Row) && (markerBefore.Column - 1 == markerAfter.Column))
                     return true;
-                if ((marker1.Row - 1 == marker2.Row) && (marker1.Column + 1 == marker2.Column))
+                if ((markerBefore.Row - 1 == markerAfter.Row) && (markerBefore.Column + 1 == markerAfter.Column))
                     return true;
-                if ((marker1.Row + 1 == marker2.Row) && (marker1.Column - 1 == marker2.Column))
+                if ((markerBefore.Row + 1 == markerAfter.Row) && (markerBefore.Column - 1 == markerAfter.Column))
                     return true;
-                if ((marker1.Row + 1 == marker2.Row) && (marker1.Column + 1 == marker2.Column))
+                if ((markerBefore.Row + 1 == markerAfter.Row) && (markerBefore.Column + 1 == markerAfter.Column))
                     return true;
             }
             if (colour == "WhiteKing")
             {
-                if ((marker1.Row - 1 == marker2.Row) && (marker1.Column - 1 == marker2.Column))
+                if ((markerBefore.Row - 1 == markerAfter.Row) && (markerBefore.Column - 1 == markerAfter.Column))
                     return true;
-                if ((marker1.Row - 1 == marker2.Row) && (marker1.Column + 1 == marker2.Column))
+                if ((markerBefore.Row - 1 == markerAfter.Row) && (markerBefore.Column + 1 == markerAfter.Column))
                     return true;
-                if ((marker1.Row + 1 == marker2.Row) && (marker1.Column - 1 == marker2.Column))
+                if ((markerBefore.Row + 1 == markerAfter.Row) && (markerBefore.Column - 1 == markerAfter.Column))
                     return true;
-                if ((marker1.Row + 1 == marker2.Row) && (marker1.Column + 1 == marker2.Column))
+                if ((markerBefore.Row + 1 == markerAfter.Row) && (markerBefore.Column + 1 == markerAfter.Column))
                     return true;
             }
             
@@ -73,44 +73,44 @@ namespace Checkers
         {
             if (colour == "Black")
             {
-                if ((marker1.Row - 2 == marker2.Row) && (marker1.Column - 2 == marker2.Column))
-                    return new Marker(marker1.Row -1,marker1.Column - 1);
-                if ((marker1.Row - 2 == marker2.Row) && (marker1.Column + 2 == marker2.Column))
-                    return new Marker(marker1.Row - 1, marker1.Column + 1);
+                if ((markerBefore.Row - 2 == markerAfter.Row) && (markerBefore.Column - 2 == markerAfter.Column))
+                    return new Marker(markerBefore.Row -1,markerBefore.Column - 1);
+                if ((markerBefore.Row - 2 == markerAfter.Row) && (markerBefore.Column + 2 == markerAfter.Column))
+                    return new Marker(markerBefore.Row - 1, markerBefore.Column + 1);
             }
             if (colour == "White")
             {
-                if ((marker1.Row + 2 == marker2.Row) && (marker1.Column - 2 == marker2.Column))
-                    return new Marker(marker1.Row + 1, marker1.Column - 1);
-                if ((marker1.Row + 2 == marker2.Row) && (marker1.Column + 2 == marker2.Column))
-                    return new Marker(marker1.Row + 1, marker1.Column + 1);
+                if ((markerBefore.Row + 2 == markerAfter.Row) && (markerBefore.Column - 2 == markerAfter.Column))
+                    return new Marker(markerBefore.Row + 1, markerBefore.Column - 1);
+                if ((markerBefore.Row + 2 == markerAfter.Row) && (markerBefore.Column + 2 == markerAfter.Column))
+                    return new Marker(markerBefore.Row + 1, markerBefore.Column + 1);
 
             }
             if (colour == "BlackKing")
             {
-                if ((marker1.Row - 2 == marker2.Row) && (marker1.Column - 2 == marker2.Column))
-                    return new Marker(marker1.Row - 1, marker1.Column - 1);
-                if ((marker1.Row - 2 == marker2.Row) && (marker1.Column + 2 == marker2.Column))
-                    return new Marker(marker1.Row - 1, marker1.Column + 1);
+                if ((markerBefore.Row - 2 == markerAfter.Row) && (markerBefore.Column - 2 == markerAfter.Column))
+                    return new Marker(markerBefore.Row - 1, markerBefore.Column - 1);
+                if ((markerBefore.Row - 2 == markerAfter.Row) && (markerBefore.Column + 2 == markerAfter.Column))
+                    return new Marker(markerBefore.Row - 1, markerBefore.Column + 1);
                 //if ((marker1.Row + 2 == marker2.Row) && (marker1.Column - 2 == marker2.Column))
                 //    return new Marker(marker1.Row - 1, marker1.Column - 1);
                 //if ((marker1.Row + 2 == marker2.Row) && (marker1.Column + 2 == marker2.Column))
                 //    return new Marker(marker1.Row + 1, marker1.Column + 1);
-                if ((marker1.Row + 2 == marker2.Row) && (marker1.Column - 2 == marker2.Column))
-                    return new Marker(marker1.Row + 1, marker1.Column - 1);
-                if ((marker1.Row + 2 == marker2.Row) && (marker1.Column + 2 == marker2.Column))
-                    return new Marker(marker1.Row + 1, marker1.Column + 1);
+                if ((markerBefore.Row + 2 == markerAfter.Row) && (markerBefore.Column - 2 == markerAfter.Column))
+                    return new Marker(markerBefore.Row + 1, markerBefore.Column - 1);
+                if ((markerBefore.Row + 2 == markerAfter.Row) && (markerBefore.Column + 2 == markerAfter.Column))
+                    return new Marker(markerBefore.Row + 1, markerBefore.Column + 1);
             }
             if (colour == "WhiteKing")
             {
-                if ((marker1.Row - 2 == marker2.Row) && (marker1.Column - 2 == marker2.Column))
-                    return new Marker(marker1.Row - 1, marker1.Column - 1);
-                if ((marker1.Row - 2 == marker2.Row) && (marker1.Column + 2 == marker2.Column))
-                    return new Marker(marker1.Row - 1, marker1.Column + 1);
-                if ((marker1.Row + 2 == marker2.Row) && (marker1.Column - 2 == marker2.Column))
-                    return new Marker(marker1.Row - 1, marker1.Column - 1);
-                if ((marker1.Row + 2 == marker2.Row) && (marker1.Column + 2 == marker2.Column))
-                    return new Marker(marker1.Row + 1, marker1.Column + 1);
+                if ((markerBefore.Row - 2 == markerAfter.Row) && (markerBefore.Column - 2 == markerAfter.Column))
+                    return new Marker(markerBefore.Row - 1, markerBefore.Column - 1);
+                if ((markerBefore.Row - 2 == markerAfter.Row) && (markerBefore.Column + 2 == markerAfter.Column))
+                    return new Marker(markerBefore.Row - 1, markerBefore.Column + 1);
+                if ((markerBefore.Row + 2 == markerAfter.Row) && (markerBefore.Column - 2 == markerAfter.Column))
+                    return new Marker(markerBefore.Row - 1, markerBefore.Column - 1);
+                if ((markerBefore.Row + 2 == markerAfter.Row) && (markerBefore.Column + 2 == markerAfter.Column))
+                    return new Marker(markerBefore.Row + 1, markerBefore.Column + 1);
             }
             return null;
         }
@@ -127,7 +127,7 @@ namespace Checkers
                 return false;
             }
 
-            return marker1.Equals(move.marker1) && marker2.Equals(move.marker2);
+            return markerBefore.Equals(move.markerBefore) && markerAfter.Equals(move.markerAfter);
 
         }
     }

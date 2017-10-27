@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Resources;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Checkers
 {
@@ -36,6 +38,7 @@ namespace Checkers
         Stack Redo_Stack = new Stack();
         Stack ReTaken_Stack = new Stack();
         SingletonLists Game_List = SingletonLists.Instance;
+        private int refid = 0;
 
 
 
@@ -44,6 +47,7 @@ namespace Checkers
             InitializeComponent();
             this.Title = "Draughts";
             BuildBoard();
+            newGame();
             changeTurn();
 
         }
@@ -209,24 +213,26 @@ namespace Checkers
             Console.WriteLine("Row: " + row + " Column: " + col);
             if (currentMove == null)
                 currentMove = new Move();
-            if (currentMove.marker1 == null)
+            if (currentMove.markerBefore == null)
             {
-                currentMove.marker1 = new Marker(row, col);
+                currentMove.markerBefore = new Marker(row, col);
                 stackPanel.Background = Brushes.SkyBlue;
             }
             else
             {
-                currentMove.marker2 = new Marker(row, col);
+                currentMove.markerAfter = new Marker(row, col);
                 stackPanel.Background = Brushes.SkyBlue;
             }
-            if ((currentMove.marker1 != null) && (currentMove.marker2 != null))
+            if ((currentMove.markerBefore != null) && (currentMove.markerAfter != null))
             {
                 if (numPlayers == 1)
                 {
                     if (CheckMove())
                     {
                         MakeMove();
-                        // aiturn();
+                         AiTurn();
+                        MessageBox.Show("boo");
+                    
                     }
 
                 }
@@ -258,24 +264,24 @@ namespace Checkers
 
         private void MakeMove()
         {
-            if ((currentMove.marker1 != null) && (currentMove.marker2 != null))
+            if ((currentMove.markerBefore != null) && (currentMove.markerAfter != null))
             {
-                Console.WriteLine("Marker1 " + currentMove.marker1.Row + ", " + currentMove.marker1.Column);
-                Console.WriteLine("Marker2 " + currentMove.marker2.Row + ", " + currentMove.marker2.Column);
-                StackPanel stackPanel1 = (StackPanel)GetGridElement(DraughtsBoard, currentMove.marker1.Row, currentMove.marker1.Column);
-                StackPanel stackPanel2 = (StackPanel)GetGridElement(DraughtsBoard, currentMove.marker2.Row, currentMove.marker2.Column);
+                Console.WriteLine("Marker1 " + currentMove.markerBefore.Row + ", " + currentMove.markerBefore.Column);
+                Console.WriteLine("Marker2 " + currentMove.markerAfter.Row + ", " + currentMove.markerAfter.Column);
+                StackPanel stackPanel1 = (StackPanel)GetGridElement(DraughtsBoard, currentMove.markerBefore.Row, currentMove.markerBefore.Column);
+                StackPanel stackPanel2 = (StackPanel)GetGridElement(DraughtsBoard, currentMove.markerAfter.Row, currentMove.markerAfter.Column);
                 DraughtsBoard.Children.Remove(stackPanel1);
                 DraughtsBoard.Children.Remove(stackPanel2);
-                Grid.SetRow(stackPanel1, currentMove.marker2.Row);
-                Grid.SetColumn(stackPanel1, currentMove.marker2.Column);
+                Grid.SetRow(stackPanel1, currentMove.markerAfter.Row);
+                Grid.SetColumn(stackPanel1, currentMove.markerAfter.Column);
                 DraughtsBoard.Children.Add(stackPanel1);
-                Grid.SetRow(stackPanel2, currentMove.marker1.Row);
-                Grid.SetColumn(stackPanel2, currentMove.marker1.Column);
+                Grid.SetRow(stackPanel2, currentMove.markerBefore.Row);
+                Grid.SetColumn(stackPanel2, currentMove.markerBefore.Column);
                 DraughtsBoard.Children.Add(stackPanel2);
 
-                KingMe(currentMove.marker2);
-                addToUndo(currentMove.marker1, currentMove.marker2);
-               
+                KingMe(currentMove.markerAfter);
+                addToUndo(currentMove.markerBefore, currentMove.markerAfter);
+                AddToHistory(currentMove.markerBefore, currentMove.markerAfter);
 
                 currentMove = null;
 
@@ -378,8 +384,8 @@ namespace Checkers
         private Boolean CheckMove()
         {
             var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
-            StackPanel stackPanel1 = (StackPanel)GetGridElement(DraughtsBoard, currentMove.marker1.Row, currentMove.marker1.Column);
-            StackPanel stackPanel2 = (StackPanel)GetGridElement(DraughtsBoard, currentMove.marker2.Row, currentMove.marker2.Column);
+            StackPanel stackPanel1 = (StackPanel)GetGridElement(DraughtsBoard, currentMove.markerBefore.Row, currentMove.markerBefore.Column);
+            StackPanel stackPanel2 = (StackPanel)GetGridElement(DraughtsBoard, currentMove.markerAfter.Row, currentMove.markerAfter.Column);
             Button button1 = (Button)stackPanel1.Children[0];
             Button button2 = (Button)stackPanel2.Children[0];
             stackPanel1.Background = BoardBlack;
@@ -387,22 +393,22 @@ namespace Checkers
 
             if ((turn == "White") && (button1.Name.Contains("Black")))
             {
-                currentMove.marker1 = null;
-                currentMove.marker2 = null;
+                currentMove.markerBefore = null;
+                currentMove.markerAfter = null;
                 showError("It is " + playername1 + " turn.");
                 return false;
             }
             if ((turn == "Black") && (button1.Name.Contains("White")))
             {
-                currentMove.marker1 = null;
-                currentMove.marker2 = null;
+                currentMove.markerBefore = null;
+                currentMove.markerAfter = null;
                 showError("It is " + playername2 + " turn.");
                 return false;
             }
             if (button1.Equals(button2))
             {
-                currentMove.marker1 = null;
-                currentMove.marker2 = null;
+                currentMove.markerBefore = null;
+                currentMove.markerAfter = null;
                 return false;
             }
             if (button1.Name.Contains("Black"))
@@ -415,8 +421,8 @@ namespace Checkers
             }
             else
             {
-                currentMove.marker1 = null;
-                currentMove.marker2 = null;
+                currentMove.markerBefore = null;
+                currentMove.markerAfter = null;
                 Console.WriteLine("False");
                 return false;
             }
@@ -438,8 +444,8 @@ namespace Checkers
                 if (invalid)
                 {
                     showError("Jump must be taken");
-                    currentMove.marker1 = null;
-                    currentMove.marker2 = null;
+                    currentMove.markerBefore = null;
+                    currentMove.markerAfter = null;
                     Console.WriteLine("False");
                     return false;
                 }
@@ -538,8 +544,8 @@ namespace Checkers
                 if (invalid)
                 {
                     showError("Jump must be taken");
-                    currentMove.marker1 = null;
-                    currentMove.marker2 = null;
+                    currentMove.markerBefore = null;
+                    currentMove.markerAfter = null;
                     Console.WriteLine("False");
                     return false;
                 }
@@ -698,9 +704,33 @@ namespace Checkers
         {
             Cleaner();
             BuildBoard();
+            NewReplay();
+            if (winner == "White")
+            {
+                turn = "Black";
+                lblturn.Content = playername2 + " Turn!";
+            }
+            else if ((winner == "Black") || winner == null)
+            {
+                turn = "White";
+                lblturn.Content = playername1 + " Turn!";
+            }
+            if (numPlayers == 1)
+            {
+                turn = "Black";
+                lblturn.Content = playername2 + " Turn!";
+            }
+
+            //MessageBox.Show("New Game Test");
+            //MessageBox.Show("number of player"+numPlayers.ToString());
+            //MessageBox.Show("player 1 name: " + playername1 +"\nPlayer 2 name: "+playername2);
+        }
+
+        private void NewReplay()
+        {
             //new replay
             History GameHistory = new History();
-            int refid = 0;
+            
             if (Game_List.GameList.Count == 0)
             {
                 refid = refid + 1;
@@ -720,23 +750,8 @@ namespace Checkers
                 }
                 GameHistory.ID = refid;
             }
-            
-
-            
-            if (winner == "White")
-            {
-                turn = "Black";
-                lblturn.Content = playername2 + " Turn!";
-            }
-            else if ((winner == "Black") || winner == null)
-            {
-                turn = "White";
-                lblturn.Content = playername1 + " Turn!";
-            }
-
-            //MessageBox.Show("New Game Test");
-            //MessageBox.Show("number of player"+numPlayers.ToString());
-            //MessageBox.Show("player 1 name: " + playername1 +"\nPlayer 2 name: "+playername2);
+            GameHistory.ID = refid;
+            Game_List.GameList.Add(GameHistory);
         }
 
         private void newGame_Click(object sender, RoutedEventArgs e)
@@ -843,7 +858,7 @@ namespace Checkers
                     buttonafter.Name = "Black" + markerAfter.Row + markerAfter.Column;
                     buttonafter.Background = BlackBrush;
                 }
-
+                AddToHistory(markerBefore, markerAfter);
                 Redo_Stack.Push(markerAfter.Row);
                 Redo_Stack.Push(markerAfter.Column);
                 Redo_Stack.Push(markerAfter.Kinged);
@@ -1016,15 +1031,192 @@ namespace Checkers
                     buttonafter.Background = BlackBrush;
                 }
                 addToUndo(markerBefore, markerAfter);
+                AddToHistory(markerBefore, markerAfter);
             }
         }
-        private void addToHistory(Marker markerBefore,Marker markerAfter)
+        //Replay function
+        private void AddToHistory(Marker markerBefore,Marker markerAfter)
+        {
+            foreach (History h in Game_List.GameList)
+                {
+                    if (refid == h.ID)
+                    {
+                        //updates customer
+                        try
+                        {
+                        h.turns.Enqueue(markerBefore.Row);
+                        h.turns.Enqueue(markerBefore.Column);
+                        h.turns.Enqueue(markerAfter.Row);
+                        h.turns.Enqueue(markerAfter.Column);
+                        h.Taken = Taken_Stack;
+                           
+                        }
+                        catch (Exception e)
+                        {
+                            MessageBox.Show(e.Message);
+                        }
+                    //if ends
+                }
+                //froeach ends
+            }
+        }
+        private void replayGame_Click(object sender, RoutedEventArgs e)
+        {
+            ReplayGame();
+        }
+        private void ReplayGame()
+        {
+            refid = 1;
+            //Marker markerB = new Marker(1, 1);
+            //Marker markerA = new Marker(2,1);
+            foreach (History h in Game_List.GameList)
+            {
+                if (refid == h.ID)
+                {
+                    //updates customer
+                    try
+                    {
+                       
+                        int id = h.ID;
+                        Console.WriteLine("GameID = " + id);
+                        while (h.turns.Count!=0)
+                        {
+                            //int x =(int)h.turns.Dequeue();
+                            // Console.WriteLine(x);
+
+                            int rowb =(int)h.turns.Dequeue();
+                            int columnb = (int)h.turns.Dequeue();
+                            int rowa = (int)h.turns.Dequeue();
+                            int columna = (int)h.turns.Dequeue();
+                            Console.WriteLine("Row Before: "+rowb);
+                            Console.WriteLine("Column Before: "+columnb);
+                            Console.WriteLine("Row After: " + rowb);
+                            Console.WriteLine("Column After: " + columnb);
+                            Marker markerB = new Marker(rowb, columnb);
+                            Marker markerA = new Marker(rowa, columna);
+
+                           
+                            wait(2000); 
+                            ShowGame(markerB, markerA);
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message);
+                    }
+                    //if ends
+                }
+                //froeach ends
+            }
+        }
+
+        private void ShowGame(Marker markerBefore, Marker markerAfter)
+        {
+           // Cleaner();
+
+            if ((markerBefore != null) && (markerAfter != null))
+            {
+
+                int jumpCheck = (markerBefore.Row - markerAfter.Row);
+
+                Console.WriteLine("Jump check = " + jumpCheck);
+                if ((jumpCheck == -2) || (jumpCheck == 2))
+                {
+                    if (turn == "Black")
+                    {
+                        bool king = (bool)ReTaken_Stack.Pop();
+                        int column = (int)ReTaken_Stack.Pop();
+                        int row = (int)ReTaken_Stack.Pop();
+
+
+                        Marker takenMarker = new Marker(row, column, king);
+
+
+                        Console.WriteLine("Kinged?" + takenMarker.Kinged);
+
+                        Console.WriteLine("taken marker row :" + takenMarker.Row);
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, takenMarker.Row, takenMarker.Column);
+                        Button middleButton = (Button)middleStackPanel.Children[0];
+                        DraughtsBoard.Children.Remove(middleStackPanel);
+                        RemoveMarker(takenMarker);
+                    }
+                    if (turn == "White")
+                    {
+                        bool king = (bool)ReTaken_Stack.Pop();
+                        int column = (int)ReTaken_Stack.Pop();
+                        int row = (int)ReTaken_Stack.Pop();
+                        Marker takenMarker = new Marker(row, column, king);
+                        Console.WriteLine("Kinged?" + takenMarker.Kinged);
+                        Console.WriteLine("taken marker row :" + takenMarker.Row);
+                        StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, takenMarker.Row, takenMarker.Column);
+                        Button middleButton = (Button)middleStackPanel.Children[0];
+                        DraughtsBoard.Children.Remove(middleStackPanel);
+                        RemoveMarker(takenMarker);
+                    }
+                }
+                Console.WriteLine("MarkerBefore " + markerBefore.Row + ", " + markerBefore.Column);
+                Console.WriteLine("MarkerAfter " + markerAfter.Row + ", " + markerAfter.Column);
+                StackPanel stackPanel1 = (StackPanel)GetGridElement(DraughtsBoard, markerBefore.Row, markerBefore.Column);
+                StackPanel stackPanel2 = (StackPanel)GetGridElement(DraughtsBoard, markerAfter.Row, markerAfter.Column);
+                Button buttonbefore = (Button)stackPanel1.Children[0];
+                Button buttonafter = (Button)stackPanel2.Children[0];
+                DraughtsBoard.Children.Remove(stackPanel1);
+                DraughtsBoard.Children.Remove(stackPanel2);
+                Grid.SetRow(stackPanel1, markerAfter.Row);
+                Grid.SetColumn(stackPanel1, markerAfter.Column);
+                DraughtsBoard.Children.Add(stackPanel1);
+                Grid.SetRow(stackPanel2, markerBefore.Row);
+                Grid.SetColumn(stackPanel2, markerBefore.Column);
+                DraughtsBoard.Children.Add(stackPanel2);
+                KingMe(markerBefore);
+                var WhiteBrush = new ImageBrush();
+                WhiteBrush.ImageSource = new BitmapImage(new Uri("Resources/WhiteMarker.png", UriKind.Relative));
+                var BlackBrush = new ImageBrush();
+                BlackBrush.ImageSource = new BitmapImage(new Uri("Resources/BlackMarker.png", UriKind.Relative));
+                if (markerAfter.Kinged == true && markerBefore.Kinged == false && buttonafter.Name.Contains("White"))
+                {
+                    buttonafter.Name = "White" + markerAfter.Row + markerAfter.Column;
+                    buttonafter.Background = WhiteBrush;
+                }
+                else if (markerAfter.Kinged == true && markerBefore.Kinged == false && buttonafter.Name.Contains("Black"))
+                {
+                    buttonafter.Name = "Black" + markerAfter.Row + markerAfter.Column;
+                    buttonafter.Background = BlackBrush;
+                }
+
+
+
+
+            }
+
+            CheckforWinnner();
+            
+        }
+
+
+        private void wait(int ms)
         {
 
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(ms);
+            timer.Start();
+
         }
-    
 
-
+        private void AiTurn()
+        {
+            currentMove = AI.GetMove(GetBoard());
+            Console.WriteLine(currentMove);
+            if (currentMove != null)
+            {
+                if (CheckMove())
+                {
+                    MakeMove();
+                    
+                }
+            }
+        }
 
         //end of program!      
     }

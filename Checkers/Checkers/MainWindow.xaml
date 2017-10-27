@@ -57,6 +57,7 @@
         <Menu IsMainMenu="True" Grid.ColumnSpan="8">
             <MenuItem Header="_File">
                 <MenuItem Header="_New Game" Click="newGame_Click" InputGestureText="F2"/>
+                <MenuItem Header="_Replay Game" Click="replayGame_Click" InputGestureText=""/>
                 <MenuItem Header="_Exit" Click="exit_Click" InputGestureText="Alt + F4"/>
             </MenuItem>
             <MenuItem Header="_Edit">
