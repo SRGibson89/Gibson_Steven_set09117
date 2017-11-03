@@ -34,16 +34,15 @@ namespace Checkers
         //sets state of a piece
         public bool SetState(int row, int column, int state)
         {
-            if ((state > 4) || (state < 1))
-            {
+            if ((state > 4) || (state < -1))
+            
                 return false;
 
-            }
-            else
-            {
+            
+            
                 board[row, column] = state;
                 return true;
-            }
+            
         }
 
         //gets the state of a piece
@@ -53,13 +52,12 @@ namespace Checkers
             {
                 return -1;
             }
-            else
-            {
-                return board[row, column];
-            }
+            return board[row, column];
+            
 
         }
-        public List<Move> CheckJumps(string color)
+
+        public List<Move> checkJumps(string color)
         {
             List<Move> jumps = new List<Move>();
 

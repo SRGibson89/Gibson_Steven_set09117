@@ -221,7 +221,7 @@ namespace Checkers
             else
             {
                 currentMove.markerAfter = new Marker(row, col);
-                stackPanel.Background = Brushes.SkyBlue;
+                stackPanel.Background = Brushes.Blue;
             }
             if ((currentMove.markerBefore != null) && (currentMove.markerAfter != null))
             {
@@ -230,8 +230,8 @@ namespace Checkers
                     if (CheckMove())
                     {
                         MakeMove();
-                         AiTurn();
-                        MessageBox.Show("boo");
+                        AiTurn();
+                        
                     
                     }
 
@@ -241,7 +241,7 @@ namespace Checkers
                     if (CheckMove())
                     {
                         MakeMove();
-                        changeTurn();
+                        //changeTurn();
                     }
 
                 }
@@ -284,7 +284,7 @@ namespace Checkers
                 AddToHistory(currentMove.markerBefore, currentMove.markerAfter);
 
                 currentMove = null;
-
+                changeTurn();
             }
 
             CheckforWinnner();
@@ -431,7 +431,7 @@ namespace Checkers
         private bool CheckMoveWhite(Button button1, Button button2)
         {
             Checkers_Board currentBoard = GetBoard();
-            List<Move> playerMoves = currentBoard.CheckJumps("White");
+            List<Move> playerMoves = currentBoard.checkJumps("White");
 
             if (playerMoves.Count > 0)
             {
@@ -531,7 +531,7 @@ namespace Checkers
         private bool CheckMoveBlack(Button button1, Button button2)
         {
             Checkers_Board currentBoard = GetBoard();
-            List<Move> playerMoves = currentBoard.CheckJumps("Black");
+            List<Move> playerMoves = currentBoard.checkJumps("Black");
 
             if (playerMoves.Count > 0)
             {
@@ -617,21 +617,21 @@ namespace Checkers
                         Button button = (Button)stackPanel.Children[0];
                         if (button.Name.Contains("White"))
                         {
-                            if (button.Name.Contains("King"))
+                            if (button.Name.Contains("WhiteKing"))
                                 board.SetState(row - 1, column, 3);
                             else
                                 board.SetState(row - 1, column, 1);
                         }
                         else if (button.Name.Contains("Black"))
                         {
-                            if (button.Name.Contains("King"))
+                            if (button.Name.Contains("BlackKing"))
                                 board.SetState(row - 1, column, 4);
                             else
                                 board.SetState(row - 1, column, 2);
                         }
                         else
                             board.SetState(row - 1, column, 0);
-
+                        
                     }
                     else
                     {
@@ -1207,7 +1207,8 @@ namespace Checkers
         private void AiTurn()
         {
             currentMove = AI.GetMove(GetBoard());
-            Console.WriteLine(currentMove);
+            Console.WriteLine("AI Move");
+            Console.WriteLine("CurrentMove: "+currentMove);
             if (currentMove != null)
             {
                 if (CheckMove())

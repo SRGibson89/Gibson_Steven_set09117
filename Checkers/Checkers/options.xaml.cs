@@ -20,7 +20,7 @@ namespace Checkers
     public partial class options : Window
     {
         public int numberOfPlayers { get; set; }
-         int music = 0;
+        // int music = 0;
         public bool playbackground;
         
         

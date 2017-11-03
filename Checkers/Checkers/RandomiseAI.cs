@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Checkers
 {
-    static class MyExtensions
+    static class RandomiseAI
     {
         public static void Shuffle<T>(this IList<T> list)
         {
@@ -21,6 +21,5 @@ namespace Checkers
                 list[n] = value;
             }
         }
-
     }
 }

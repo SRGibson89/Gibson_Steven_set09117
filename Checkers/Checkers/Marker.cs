@@ -37,7 +37,7 @@ namespace Checkers
                 return false;
             }
 
-            return Row == marker.Row && Column == marker.Column;
+            return Row == marker.Row && Column == marker.Column && Kinged==marker.Kinged;
         }
 
 
