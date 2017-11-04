@@ -31,12 +31,14 @@ namespace Checkers
         private String turn = "Black";
         public String playername1 = "White", playername2 = "Black";
         public int numPlayers = 2;
+        public bool won = false;
         System.Media.SoundPlayer winnermusic = new System.Media.SoundPlayer(@"Resources/Winner.wav");
         System.Media.SoundPlayer backgroundmusic = new System.Media.SoundPlayer(@"Resources/Background.wav");
         Stack Undo_Stack = new Stack();
         Stack Taken_Stack = new Stack();
         Stack Redo_Stack = new Stack();
         Stack ReTaken_Stack = new Stack();
+        Stack Replay_Stack = new Stack();
         SingletonLists Game_List = SingletonLists.Instance;
         private int refid = 0;
 
@@ -48,7 +50,7 @@ namespace Checkers
             this.Title = "Draughts";
             BuildBoard();
             newGame();
-            changeTurn();
+            
 
         }
 
@@ -200,8 +202,27 @@ namespace Checkers
             }
             Undo_Stack.Clear();
             Redo_Stack.Clear();
-            Taken_Stack.Clear();
+            //Taken_Stack.Clear();
             ReTaken_Stack.Clear();
+            while (Taken_Stack.Count != 0)
+            {
+                bool king = (bool)Taken_Stack.Pop();
+                int column = (int)Taken_Stack.Pop();
+                int row = (int)Taken_Stack.Pop();
+                foreach (History h in Game_List.GameList)
+                {
+                    if (refid ==h.ID)
+                    {
+                        h.Taken.Push(row);
+                        h.Taken.Push(column);
+                        h.Taken.Push(king);
+                    }
+                }
+                
+            }
+            Taken_Stack.Clear();
+        
+            
         }
 
         public void Button_Click(Object sender, RoutedEventArgs e)
@@ -361,6 +382,7 @@ namespace Checkers
             {
                 winner = "Black";
                 winnermusic.Play();
+                won = true;
                 var result = MessageBox.Show(playername2 + " has won!", "Winner", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
                 if (result == MessageBoxResult.Yes)
                 {
@@ -372,6 +394,7 @@ namespace Checkers
             {
                 winner = "White";
                 winnermusic.Play();
+                won = true;
                 var result = MessageBox.Show(playername1 + " has won!", "Winner", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
                 if (result == MessageBoxResult.Yes)
                 {
@@ -702,25 +725,37 @@ namespace Checkers
 
         private void newGame()
         {
+            
             Cleaner();
             BuildBoard();
             NewReplay();
-            if (winner == "White")
-            {
+            won = false;
+            refid++;
+            //if ((winner == "White") || (winner == null))
+            //{
                 turn = "Black";
-                lblturn.Content = playername2 + " Turn!";
-            }
-            else if ((winner == "Black") || winner == null)
-            {
-                turn = "White";
-                lblturn.Content = playername1 + " Turn!";
-            }
-            if (numPlayers == 1)
-            {
-                turn = "Black";
-                lblturn.Content = playername2 + " Turn!";
-            }
+            //    lblturn.Content = playername2 + " Turn!";
+            //}
+            //else if (winner == "Black") 
+            //{
+            //    turn = "White";
+            //    lblturn.Content = playername1 + " Turn!";
+            //}
+            //if (numPlayers == 1)
+            //{
+            //    turn = "Black";
+            //    lblturn.Content = playername2 + " Turn!";
+            //}
 
+            //if (numPlayers == 0)
+            //{
+            //    turn = "White";
+            //    while (won == false)
+            //    {
+            //        AiTurn();
+            //    }
+            //}
+            Console.WriteLine("GameID: " + refid);
             //MessageBox.Show("New Game Test");
             //MessageBox.Show("number of player"+numPlayers.ToString());
             //MessageBox.Show("player 1 name: " + playername1 +"\nPlayer 2 name: "+playername2);
@@ -733,7 +768,7 @@ namespace Checkers
             
             if (Game_List.GameList.Count == 0)
             {
-                refid = refid + 1;
+                
             }
             else
             {
@@ -1037,34 +1072,33 @@ namespace Checkers
         //Replay function
         private void AddToHistory(Marker markerBefore,Marker markerAfter)
         {
+            
             foreach (History h in Game_List.GameList)
                 {
-                    if (refid == h.ID)
-                    {
-                        //updates customer
+                                         
                         try
                         {
+                        h.ID=refid;
                         h.turns.Enqueue(markerBefore.Row);
                         h.turns.Enqueue(markerBefore.Column);
                         h.turns.Enqueue(markerAfter.Row);
                         h.turns.Enqueue(markerAfter.Column);
-                        h.Taken = Taken_Stack;
-                           
+                        
+                        
                         }
                         catch (Exception e)
                         {
                             MessageBox.Show(e.Message);
                         }
-                    //if ends
-                }
+                    }
                 //froeach ends
             }
-        }
+        
         private void replayGame_Click(object sender, RoutedEventArgs e)
         {
             ReplayGame();
         }
-        private void ReplayGame()
+        async void ReplayGame()
         {
             refid = 1;
             //Marker markerB = new Marker(1, 1);
@@ -1073,31 +1107,57 @@ namespace Checkers
             {
                 if (refid == h.ID)
                 {
-                    //updates customer
+                    Stack tmp = new Stack();
                     try
                     {
-                       
+                        while (h.Taken.Count != 0)
+                        {
+                            bool kingtmp = (bool)h.Taken.Pop();
+                            int columntmp = (int)h.Taken.Pop();
+                            int rowtmp = (int)h.Taken.Pop();
+
+                            tmp.Push(rowtmp);
+                            tmp.Push(columntmp);
+                            tmp.Push(kingtmp);
+                        }
+                        while(tmp.Count!=0)
+                        {
+                            bool king = (bool)tmp.Pop();
+                            int column = (int)tmp.Pop();
+                            int row = (int)tmp.Pop();
+
+                            Replay_Stack.Push(row);
+                            Replay_Stack.Push(column);
+                            Replay_Stack.Push(king);
+
+                            
+                        }
                         int id = h.ID;
+                        
                         Console.WriteLine("GameID = " + id);
                         while (h.turns.Count!=0)
                         {
                             //int x =(int)h.turns.Dequeue();
                             // Console.WriteLine(x);
-
+                            
                             int rowb =(int)h.turns.Dequeue();
                             int columnb = (int)h.turns.Dequeue();
                             int rowa = (int)h.turns.Dequeue();
                             int columna = (int)h.turns.Dequeue();
-                            Console.WriteLine("Row Before: "+rowb);
-                            Console.WriteLine("Column Before: "+columnb);
-                            Console.WriteLine("Row After: " + rowb);
-                            Console.WriteLine("Column After: " + columnb);
+                            //Console.WriteLine("h.Taken Count: " + h.Taken.Count);
+                            //Console.WriteLine("TakenStack count: " + Taken_Stack.Count);
+                            
+                            //Console.WriteLine("Row Before: "+rowb);
+                            //Console.WriteLine("Column Before: "+columnb);
+                            //Console.WriteLine("Row After: " + rowb);
+                            //Console.WriteLine("Column After: " + columnb);
                             Marker markerB = new Marker(rowb, columnb);
                             Marker markerA = new Marker(rowa, columna);
 
-                           
-                            wait(2000); 
-                            ShowGame(markerB, markerA);
+                            await PutTaskReplayDelay();
+                            //wait(2000); 
+                           ShowGame(markerB, markerA);
+                            //redoMove(markerB, markerA);
                         }
 
                     }
@@ -1113,21 +1173,23 @@ namespace Checkers
 
         private void ShowGame(Marker markerBefore, Marker markerAfter)
         {
-           // Cleaner();
+
+
 
             if ((markerBefore != null) && (markerAfter != null))
             {
 
                 int jumpCheck = (markerBefore.Row - markerAfter.Row);
+                
 
                 Console.WriteLine("Jump check = " + jumpCheck);
                 if ((jumpCheck == -2) || (jumpCheck == 2))
                 {
                     if (turn == "Black")
                     {
-                        bool king = (bool)ReTaken_Stack.Pop();
-                        int column = (int)ReTaken_Stack.Pop();
-                        int row = (int)ReTaken_Stack.Pop();
+                        bool king = (bool)Replay_Stack.Pop();
+                        int column = (int)Replay_Stack.Pop();
+                        int row = (int)Replay_Stack.Pop();
 
 
                         Marker takenMarker = new Marker(row, column, king);
@@ -1139,20 +1201,20 @@ namespace Checkers
                         StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, takenMarker.Row, takenMarker.Column);
                         Button middleButton = (Button)middleStackPanel.Children[0];
                         DraughtsBoard.Children.Remove(middleStackPanel);
-                        RemoveMarker(takenMarker);
+                        ReplayRemoveMarker(takenMarker);
                     }
                     if (turn == "White")
                     {
-                        bool king = (bool)ReTaken_Stack.Pop();
-                        int column = (int)ReTaken_Stack.Pop();
-                        int row = (int)ReTaken_Stack.Pop();
+                        bool king = (bool)Replay_Stack.Pop();
+                        int column = (int)Replay_Stack.Pop();
+                        int row = (int)Replay_Stack.Pop();
                         Marker takenMarker = new Marker(row, column, king);
                         Console.WriteLine("Kinged?" + takenMarker.Kinged);
                         Console.WriteLine("taken marker row :" + takenMarker.Row);
                         StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, takenMarker.Row, takenMarker.Column);
                         Button middleButton = (Button)middleStackPanel.Children[0];
                         DraughtsBoard.Children.Remove(middleStackPanel);
-                        RemoveMarker(takenMarker);
+                        ReplayRemoveMarker(takenMarker);
                     }
                 }
                 Console.WriteLine("MarkerBefore " + markerBefore.Row + ", " + markerBefore.Column);
@@ -1184,16 +1246,48 @@ namespace Checkers
                     buttonafter.Name = "Black" + markerAfter.Row + markerAfter.Column;
                     buttonafter.Background = BlackBrush;
                 }
-
+                changeTurn();
 
 
 
             }
 
             CheckforWinnner();
+
+               
             
         }
 
+        private void ReplayRemoveMarker(Marker middleMove)
+        {
+           
+           
+            var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
+            StackPanel stackPanel = new StackPanel();
+            stackPanel.Background = BoardBlack;
+            Button button = new Button();
+            button.Click += new RoutedEventHandler(Button_Click);
+            button.Height = 60;
+            button.Width = 60;
+            button.HorizontalAlignment = HorizontalAlignment.Center;
+            button.VerticalAlignment = VerticalAlignment.Center;
+            button.Background = BoardBlack;
+            button.Name = "button" + middleMove.Row + middleMove.Column;
+            stackPanel.Children.Add(button);
+            Grid.SetColumn(stackPanel, middleMove.Column);
+            Grid.SetRow(stackPanel, middleMove.Row);
+            DraughtsBoard.Children.Add(stackPanel);
+        
+        }
+
+        async Task PutTaskReplayDelay()
+        {
+            await Task.Delay(1500);
+        }
+        async Task PutTaskAIDelay()
+        {
+            await Task.Delay(1000);
+        }
 
         private void wait(int ms)
         {
@@ -1204,8 +1298,9 @@ namespace Checkers
 
         }
 
-        private void AiTurn()
+        async void AiTurn()
         {
+            await PutTaskAIDelay();
             currentMove = AI.GetMove(GetBoard());
             Console.WriteLine("AI Move");
             Console.WriteLine("CurrentMove: "+currentMove);

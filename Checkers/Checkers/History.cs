@@ -16,6 +16,7 @@ namespace Checkers
         private string name { get; set; }
         public Queue turns = new Queue();
         public Stack Taken = new Stack();
+        public Array Taken_A = new Array[]{};
 
         public int ID
         {
