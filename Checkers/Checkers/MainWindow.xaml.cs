@@ -793,7 +793,7 @@ namespace Checkers
         {
             newGame();
         }
-
+        //Undo Function
         private void undo_Click(object sender, RoutedEventArgs e)
         {
 
@@ -1284,6 +1284,8 @@ namespace Checkers
         {
             await Task.Delay(1500);
         }
+
+        //AI Function
         async Task PutTaskAIDelay()
         {
             await Task.Delay(1000);
