@@ -106,3 +106,5 @@ C:\Users\Steven\Documents\GitHub\Gibson_Steven_set09117\Checkers\Checkers\obj\De
 C:\Users\Steven\Documents\GitHub\Gibson_Steven_set09117\Checkers\Checkers\obj\Debug\Checkers.exe.manifest
 C:\Users\Steven\Documents\GitHub\Gibson_Steven_set09117\Checkers\Checkers\obj\Debug\Checkers.application
 E:\Github\Gibson_Steven_set09117\Checkers\Checkers\obj\Debug\Checkers.csproj.CoreCompileInputs.cache
+E:\GitHub\Gibson_Steven_set09117\Checkers\Checkers\obj\Debug\ReplayWindow.g.cs
+E:\GitHub\Gibson_Steven_set09117\Checkers\Checkers\obj\Debug\ReplayWindow.baml

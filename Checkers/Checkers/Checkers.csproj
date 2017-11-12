@@ -93,7 +93,11 @@
     </ApplicationDefinition>
     <Compile Include="AI.cs" />
     <Compile Include="RandomiseAI.cs" />
+    <Compile Include="Replay.cs" />
     <Compile Include="SingletonLists.cs" />
+    <Compile Include="ReplayWindow.xaml.cs">
+      <DependentUpon>ReplayWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -109,6 +113,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="options.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ReplayWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

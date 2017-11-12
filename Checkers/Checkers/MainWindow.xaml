@@ -11,6 +11,8 @@
         <RoutedUICommand x:Key="Undo" Text="Undo" />
         <RoutedUICommand x:Key="Redo" Text="Redo" />
         <RoutedUICommand x:Key="Exit" Text="Exit" />
+        <RoutedUICommand x:Key="Save" Text="Save" />
+        <RoutedUICommand x:Key="Replay" Text="Replay" />
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource HelpBox}" Executed="help_Click" />
@@ -19,14 +21,18 @@
         <CommandBinding Command="{StaticResource Undo}" Executed="undo_Click" />
         <CommandBinding Command="{StaticResource Redo}" Executed="redo_Click" />
         <CommandBinding Command="{StaticResource Exit}" Executed="exit_Click" />
+        <CommandBinding Command="{StaticResource Save}" Executed="save_Click" />
+        <CommandBinding Command="{StaticResource Replay}" Executed="replayGame_Click" />
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="F1" Command="{StaticResource HelpBox}" />
         <KeyBinding Key="F2" Command="{StaticResource New_Game}" />
-        <KeyBinding Key="M" Modifiers="Ctrl" Command="{StaticResource Options}" />
+        <KeyBinding Key="P" Modifiers="Ctrl" Command="{StaticResource Options}" />
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{StaticResource Undo}" />
         <KeyBinding Key="Y" Modifiers="Ctrl" Command="{StaticResource Redo}" />
         <KeyBinding Key="F4" Modifiers="Alt" Command="{StaticResource Exit}"/>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{StaticResource Save}"/>
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="{StaticResource Replay}"/>
     </Window.InputBindings>
 
     <Grid x:Name="DraughtsBoard">
@@ -57,7 +63,8 @@
         <Menu IsMainMenu="True" Grid.ColumnSpan="8">
             <MenuItem Header="_File">
                 <MenuItem Header="_New Game" Click="newGame_Click" InputGestureText="F2"/>
-                <MenuItem Header="_Replay Game" Click="replayGame_Click" InputGestureText=""/>
+                <MenuItem Header="_Save Replays" Click="save_Click" InputGestureText="Ctrl + S"/>
+                <MenuItem Header="_Replay Last Game" Click="replayGame_Click" InputGestureText="Crtl + O"/>
                 <MenuItem Header="_Exit" Click="exit_Click" InputGestureText="Alt + F4"/>
             </MenuItem>
             <MenuItem Header="_Edit">
@@ -70,7 +77,7 @@
 
             </MenuItem>
         </Menu>
-        <Label x:Name="lblturn" Content="New Game!!" HorizontalAlignment="Left" Margin="10,10,0,0"  VerticalAlignment="Top" Width="407"  Height="41" FontSize="16" FontFamily="Stencil" Grid.ColumnSpan="7" Grid.Row="9"/>
+        <Label x:Name="lblturn" Content="New Game!! Blacks go first" HorizontalAlignment="Left" Margin="10,10,0,0"  VerticalAlignment="Top" Width="407"  Height="41" FontSize="16" FontFamily="Stencil" Grid.ColumnSpan="7" Grid.Row="9"/>
 
 
     </Grid>

@@ -40,7 +40,7 @@ namespace Checkers
         Stack ReTaken_Stack = new Stack();
         Stack Replay_Stack = new Stack();
         SingletonLists Game_List = SingletonLists.Instance;
-        private int refid = 0;
+        private int refid=0,replayid;
 
 
 
@@ -50,6 +50,7 @@ namespace Checkers
             this.Title = "Draughts";
             BuildBoard();
             newGame();
+            //refid = 0;
             
 
         }
@@ -202,17 +203,18 @@ namespace Checkers
             }
             Undo_Stack.Clear();
             Redo_Stack.Clear();
-            //Taken_Stack.Clear();
+            
             ReTaken_Stack.Clear();
             while (Taken_Stack.Count != 0)
             {
-                bool king = (bool)Taken_Stack.Pop();
-                int column = (int)Taken_Stack.Pop();
-                int row = (int)Taken_Stack.Pop();
+                
                 foreach (History h in Game_List.GameList)
                 {
-                    if (refid ==h.ID)
+                    if (refid == h.ID)
                     {
+                        bool king = (bool)Taken_Stack.Pop();
+                        int column = (int)Taken_Stack.Pop();
+                        int row = (int)Taken_Stack.Pop();
                         h.Taken.Push(row);
                         h.Taken.Push(column);
                         h.Taken.Push(king);
@@ -728,9 +730,10 @@ namespace Checkers
             
             Cleaner();
             BuildBoard();
+            refid++;
             NewReplay();
             won = false;
-            refid++;
+            
             //if ((winner == "White") || (winner == null))
             //{
                 turn = "Black";
@@ -765,26 +768,6 @@ namespace Checkers
         {
             //new replay
             History GameHistory = new History();
-            
-            if (Game_List.GameList.Count == 0)
-            {
-                
-            }
-            else
-            {
-                foreach (History h_loop in Game_List.GameList)
-                {
-                    if (h_loop.ID >= refid)
-                    {
-                        refid = h_loop.ID + 1;
-                    }
-                    else
-                    {
-                        GameHistory.ID = refid;
-                    }
-                }
-                GameHistory.ID = refid;
-            }
             GameHistory.ID = refid;
             Game_List.GameList.Add(GameHistory);
         }
@@ -1069,106 +1052,151 @@ namespace Checkers
                 AddToHistory(markerBefore, markerAfter);
             }
         }
+        
+        //Save Games
+        private void save_Click(object sender, RoutedEventArgs e)
+        {
+            saveGame();
+
+        }
+
+        private void saveGame()
+        {
+            string filename = @"\History.csv"; //filenmae where data will be stored
+            StreamWriter writer = new StreamWriter(filename);
+            foreach (History h in Game_List.GameList)
+            {
+                writer.WriteLine("{0},{1},{2},{3}", h.ID, h.Name, h.turns, h.Taken); //adds each object to the file as a line of text
+
+            }//foreach history ends
+            writer.Close(); //closes the file
+            System.Windows.MessageBox.Show("All data saved to " + filename);
+        }
+
         //Replay function
         private void AddToHistory(Marker markerBefore,Marker markerAfter)
         {
-            
-            foreach (History h in Game_List.GameList)
-                {
-                                         
-                        try
-                        {
-                        h.ID=refid;
-                        h.turns.Enqueue(markerBefore.Row);
-                        h.turns.Enqueue(markerBefore.Column);
-                        h.turns.Enqueue(markerAfter.Row);
-                        h.turns.Enqueue(markerAfter.Column);
-                        
-                        
-                        }
-                        catch (Exception e)
-                        {
-                            MessageBox.Show(e.Message);
-                        }
-                    }
-                //froeach ends
-            }
-        
-        private void replayGame_Click(object sender, RoutedEventArgs e)
-        {
-            ReplayGame();
-        }
-        async void ReplayGame()
-        {
-            refid = 1;
-            //Marker markerB = new Marker(1, 1);
-            //Marker markerA = new Marker(2,1);
+            DateTime gamedate = DateTime.Now;
+            string gamename = gamedate.Date.ToShortDateString();
+            gamename = gamename + " " + gamedate.ToShortTimeString();
+            Console.WriteLine(gamename);
             foreach (History h in Game_List.GameList)
             {
                 if (refid == h.ID)
                 {
-                    Stack tmp = new Stack();
                     try
                     {
-                        while (h.Taken.Count != 0)
-                        {
-                            bool kingtmp = (bool)h.Taken.Pop();
-                            int columntmp = (int)h.Taken.Pop();
-                            int rowtmp = (int)h.Taken.Pop();
 
-                            tmp.Push(rowtmp);
-                            tmp.Push(columntmp);
-                            tmp.Push(kingtmp);
-                        }
-                        while(tmp.Count!=0)
-                        {
-                            bool king = (bool)tmp.Pop();
-                            int column = (int)tmp.Pop();
-                            int row = (int)tmp.Pop();
-
-                            Replay_Stack.Push(row);
-                            Replay_Stack.Push(column);
-                            Replay_Stack.Push(king);
-
-                            
-                        }
-                        int id = h.ID;
-                        
-                        Console.WriteLine("GameID = " + id);
-                        while (h.turns.Count!=0)
-                        {
-                            //int x =(int)h.turns.Dequeue();
-                            // Console.WriteLine(x);
-                            
-                            int rowb =(int)h.turns.Dequeue();
-                            int columnb = (int)h.turns.Dequeue();
-                            int rowa = (int)h.turns.Dequeue();
-                            int columna = (int)h.turns.Dequeue();
-                            //Console.WriteLine("h.Taken Count: " + h.Taken.Count);
-                            //Console.WriteLine("TakenStack count: " + Taken_Stack.Count);
-                            
-                            //Console.WriteLine("Row Before: "+rowb);
-                            //Console.WriteLine("Column Before: "+columnb);
-                            //Console.WriteLine("Row After: " + rowb);
-                            //Console.WriteLine("Column After: " + columnb);
-                            Marker markerB = new Marker(rowb, columnb);
-                            Marker markerA = new Marker(rowa, columna);
-
-                            await PutTaskReplayDelay();
-                            //wait(2000); 
-                           ShowGame(markerB, markerA);
-                            //redoMove(markerB, markerA);
-                        }
+                        h.turns.Enqueue(markerBefore.Row);
+                        h.turns.Enqueue(markerBefore.Column);
+                        h.turns.Enqueue(markerAfter.Row);
+                        h.turns.Enqueue(markerAfter.Column);
+                        h.Name = gamename;
 
                     }
                     catch (Exception e)
                     {
                         MessageBox.Show(e.Message);
                     }
+                }//if ends
+            }//foreach ends
+
+        }
+
+        
+
+        private void replayGame_Click(object sender, RoutedEventArgs e)
+        {
+
+            turn = "Black";
+            ReplayWindow newwin = new ReplayWindow();
+            newwin.ShowDialog();
+            replayid = newwin.gameID;
+            Cleaner();
+            BuildBoard();
+            ReplayGame();
+            
+        }
+        async void ReplayGame()
+        {
+
+            //   if (replayid == 0)
+            //  {
+            //      MessageBox.Show("No Replays Avalible");
+            // }
+            // else
+            // {
+
+            foreach (History h in Game_List.GameList)
+
+            {
+                
+                    if (replayid == h.ID)
+
+                {
+                    History GR = new History(h);
+                    
+                    
+                    Stack tmp = new Stack();
+                        try
+                        {
+                            while (GR.Taken.Count != 0)
+                            {
+
+                                bool kingtmp = (bool)GR.Taken.Pop();
+                                int columntmp = (int)GR.Taken.Pop();
+                                int rowtmp = (int)GR.Taken.Pop();
+
+                                tmp.Push(rowtmp);
+                                tmp.Push(columntmp);
+                                tmp.Push(kingtmp);
+                            }
+                            while (tmp.Count != 0)
+                            {
+                                bool king = (bool)tmp.Pop();
+                                int column = (int)tmp.Pop();
+                                int row = (int)tmp.Pop();
+
+                                Replay_Stack.Push(row);
+                                Replay_Stack.Push(column);
+                                Replay_Stack.Push(king);
+
+
+                            }
+                            //int id = h.ID;
+
+                            //Console.WriteLine("GameID = " + id);
+                            while (GR.turns.Count != 0)
+                            {
+                                //int x =(int)h.turns.Dequeue();
+                                // Console.WriteLine(x);
+
+                                int rowb = (int)GR.turns.Dequeue();
+                                int columnb = (int)GR.turns.Dequeue();
+                                int rowa = (int)GR.turns.Dequeue();
+                                int columna = (int)GR.turns.Dequeue();
+                           
+
+                            Marker markerB = new Marker(rowb, columnb);
+                                Marker markerA = new Marker(rowa, columna);
+
+                                await PutTaskReplayDelay();
+                                //wait(2000); 
+                                ShowGame(markerB, markerA);
+                                //redoMove(markerB, markerA);
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+                            MessageBox.Show(e.Message);
+                        }
                     //if ends
                 }
                 //froeach ends
             }
+            
+            //}
         }
 
         private void ShowGame(Marker markerBefore, Marker markerAfter)
@@ -1246,6 +1274,7 @@ namespace Checkers
                     buttonafter.Name = "Black" + markerAfter.Row + markerAfter.Column;
                     buttonafter.Background = BlackBrush;
                 }
+                AddToHistory(markerBefore, markerAfter);
                 changeTurn();
 
 

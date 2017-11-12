@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Checkers"
         mc:Ignorable="d"
-        Title="options" Height="200" Width="200">
+        Title="Game Settings" Height="200" Width="200">
     <Grid HorizontalAlignment="Center">
         <Button x:Name="bntcancel" Content="Cancel" HorizontalAlignment="Left" Margin="107,139,0,0" VerticalAlignment="Top" Width="75" Click="bntcancel_Click"/>
         <Button x:Name="btnok" Content="OK" HorizontalAlignment="Left" Height="20" Margin="19,139,0,0" VerticalAlignment="Top" Width="69" Click="btnok_Click"/>

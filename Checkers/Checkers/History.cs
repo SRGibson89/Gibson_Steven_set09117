@@ -13,11 +13,16 @@ namespace Checkers
     class History
     {
         private int id;
-        private string name { get; set; }
+        private string name;
         public Queue turns = new Queue();
         public Stack Taken = new Stack();
-        public Array Taken_A = new Array[]{};
+        
 
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
         public int ID
         {
             get { return id; }
@@ -40,5 +45,21 @@ namespace Checkers
             name = N;
         }
 
+        public History(int I, string N, Queue t, Stack r)
+        {
+            id = I;
+            name = N;
+            turns = t;
+            Taken = r;
+        }
+
+        public History(History h)
+        {
+            
+            this.id = h.ID;
+            this.name = h.Name;
+            this.turns = h.turns;
+            this.Taken = h.Taken;
+        }
     }
 }

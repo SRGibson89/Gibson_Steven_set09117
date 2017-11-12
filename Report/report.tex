@@ -97,7 +97,15 @@
 	
 	\section{Design}
 \paragraph{}
-	My design for the game I took a Divide and Conquer approach, I broke the game down into sub problems and solved them. I decided I would need 6 classes to begin with MainWindow.cs for the GUI, a Board class to build the board,Marker Class to make each marker, an AI Class, a History for storing games and a move class to check for valid moves.
+	The design for the game  a Divide and Conquer approach was taken,  by braking the game down into sub problems and solving them, with this approach a class diagram was made\begin{figure}[H]
+  	
+	\centering
+
+  	\includegraphics[scale = 0.4]{board}
+  	\caption{Class Diagram}
+  	\label{fig:nonfloat}
+	\end{figure}
+six classes  would be needed beginning with MainWindow.cs for the GUI, a Board class to build the board,Marker Class to make each marker, an AI Class, a History for storing games and a move class to check for valid moves.
 	\subsection{Board}
 	\begin{figure}[H]
   	
@@ -108,31 +116,40 @@
   	\label{fig:nonfloat}
 	\end{figure}
 
-	I started with board which I made using a 2d array 8,8 so each square could be assigned to a number(-1 for invalid squares, 0 for empty squares, 1 White markers, 2 Black markers, 3 White kings, 4 Black kings) after the board was created I moved on to placing the markers, at this point I found a GUI was a better representation. I recreated the board using stack-panels still with the same numbering system.
+	To started with the board was made using a 2d int array 8,8 so each square could be assigned to a number(-1 for invalid squares, 0 for empty squares, 1 White markers, 2 Black markers, 3 White kings, 4 Black kings) after the board was created I moved on to placing the markers, at this point I found a GUI was a better representation for the game. I recreated the board using stack-panels still with the same numbering system.
+	
 	\subsection{Markers}
-	I moved on placing markers on the board I used a case a statement to place them i felt this was a more effective than a series of if statements, The marker class contains 3 values the markers row and column and wither or not it has been promoted to a king. Then they get added to a stack panel.
+	The second stage moved on placing markers on the board a case a statement was used to determine the placement of the markers, this is a more effective way to carryout the placement than a series of if statements, The marker class contains three values: the markers row and column and wither or not it has been promoted to a king. They then got added to a stack panel. a button was created to allow users to select the marker and move it to an empty square. The buttons  were named with their row and column as well as the marker it represents.
+	\begin{figure}[H]
+  	\centering
+  	\includegraphics[scale = 1.25]{Marker}
+	\caption{Markers - game markers, White and Black Markers}
+  	\label{fig:nonfloat}
+	\end{figure}
+
+	
 	\subsection{Player vs Player}
-I decided the best approach was to build working game first for player vs player, then sort out an AI player.  
+	I decided the best approach was to build working game first for player vs player, then sort out an AI player. therefore 
+	
 	\subsection{Undo/Redo}
-	To make my Undo/Redo Feature work I implemented four stacks. The undo feature uses Stacks after a player has preformed a move the move markers before and after position is added the a stack. if a marker was taken that markers co-ordinates re added to a taken marker stack so they can be replaced when a move is redone. The redo stack is added to after a move is undone and the retaken stack. After 
+	To make the Undo/Redo Feature work I implemented four stacks. The undo feature uses Stacks after a player has preformed a move the move markers before and after position is added the a stack. if a marker was taken that markers co-ordinates re added to a taken marker stack so they can be replaced when a move is redone. The redo stack is added to after a move is undone and the retaken stack is added if piece that has been taken is replaced on the board.
+	
 	\subsection{AI}
+	Lists and Fisher–Yates shuffle algorithm
+	
 	\subsection{Game Replay}
 	uses 1 queue and 2 stacks 
 
 	\section{Enhancements}
-	Some common formatting you may need uses these commands for \textbf{Bold Text}, \textit{Italics}, and \underline{underlined}.
-
+	AI VS AI, Game replays saved to a file for persistence
+	
 	\section{Critical Evaluation}
-	Some common formatting you may need uses these commands for \textbf{Bold Text}, \textit{Italics}, and \underline{underlined}.
+	
 
 	\section{Persona Evaluation}
-	Some common formatting you may need uses these commands for \textbf{Bold Text}, \textit{Italics}, and \underline{underlined}.
 	
     
-    Here is a line followed by a double line break.
-	This line is only one line break down from the above, Notice that latex can ignore this
-    
-    We can force a break \\ with the break operator.
+   
    
 
 
