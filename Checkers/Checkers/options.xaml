@@ -10,7 +10,7 @@
         <Button x:Name="bntcancel" Content="Cancel" HorizontalAlignment="Left" Margin="107,139,0,0" VerticalAlignment="Top" Width="75" Click="bntcancel_Click"/>
         <Button x:Name="btnok" Content="OK" HorizontalAlignment="Left" Height="20" Margin="19,139,0,0" VerticalAlignment="Top" Width="69" Click="btnok_Click"/>
         <ComboBox x:Name="cmbnoPlayers" Margin="128,10,22,0" VerticalAlignment="Top" SelectedIndex="1" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" Width="35">
-            
+            <ComboBoxItem Content="0" HorizontalAlignment="Left" Width="118"/>
             <ComboBoxItem Content="1" HorizontalAlignment="Left" Width="118"/>
             <ComboBoxItem Content="2" HorizontalAlignment="Left" Width="118"/>
 

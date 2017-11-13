@@ -32,6 +32,7 @@ namespace Checkers
                     if ((currentBoard.GetState(row, column) == 1) || (currentBoard.GetState(row, column) == 3))
                     {
                         currentMarkers.Add(new Marker(row, column));
+                        
                     }
                 }
             }

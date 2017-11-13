@@ -732,37 +732,18 @@ namespace Checkers
             BuildBoard();
             refid++;
             NewReplay();
-            won = false;
             
-            //if ((winner == "White") || (winner == null))
-            //{
-                turn = "Black";
-            //    lblturn.Content = playername2 + " Turn!";
-            //}
-            //else if (winner == "Black") 
-            //{
-            //    turn = "White";
-            //    lblturn.Content = playername1 + " Turn!";
-            //}
-            //if (numPlayers == 1)
-            //{
-            //    turn = "Black";
-            //    lblturn.Content = playername2 + " Turn!";
-            //}
-
-            //if (numPlayers == 0)
-            //{
-            //    turn = "White";
-            //    while (won == false)
-            //    {
-            //        AiTurn();
-            //    }
-            //}
-            Console.WriteLine("GameID: " + refid);
-            //MessageBox.Show("New Game Test");
-            //MessageBox.Show("number of player"+numPlayers.ToString());
-            //MessageBox.Show("player 1 name: " + playername1 +"\nPlayer 2 name: "+playername2);
+            turn = "Black";
+            if (numPlayers == 0)
+            {
+                AiVSAi();
+            }
+            won = false;
+            //Console.WriteLine("GameID: " + refid);
+           
         }
+
+       
 
         private void NewReplay()
         {
@@ -992,13 +973,8 @@ namespace Checkers
                         bool king = (bool)ReTaken_Stack.Pop();
                         int column = (int)ReTaken_Stack.Pop();
                         int row = (int)ReTaken_Stack.Pop();
-
-
                         Marker takenMarker = new Marker(row, column, king);
-
-
                         Console.WriteLine("Kinged?" + takenMarker.Kinged);
-
                         Console.WriteLine("taken marker row :" + takenMarker.Row);
                         StackPanel middleStackPanel = (StackPanel)GetGridElement(DraughtsBoard, takenMarker.Row, takenMarker.Column);
                         Button middleButton = (Button)middleStackPanel.Children[0];
@@ -1057,7 +1033,6 @@ namespace Checkers
         private void save_Click(object sender, RoutedEventArgs e)
         {
             saveGame();
-
         }
 
         private void saveGame()
@@ -1311,7 +1286,7 @@ namespace Checkers
 
         async Task PutTaskReplayDelay()
         {
-            await Task.Delay(1500);
+            await Task.Delay(2000);
         }
 
         //AI Function
@@ -1344,7 +1319,51 @@ namespace Checkers
                 }
             }
         }
+        
 
+        async void AiVSAi()
+        {
+            while (won == false)
+            {
+                BlackAiTurn();
+                await PutTaskAIDelay();
+                
+                WhiteAiTurn();
+
+
+            }
+        }
+        //AI VS AI
+        private void BlackAiTurn()
+        {
+
+            currentMove = BlackAI.GetMove(GetBoard());
+            Console.WriteLine("AI Move");
+            Console.WriteLine("CurrentMove: " + currentMove);
+            if (currentMove != null)
+            {
+                if (CheckMove())
+                {
+                    MakeMove();
+
+                }
+            }
+        }
+        private void WhiteAiTurn()
+        {
+
+            currentMove = AI.GetMove(GetBoard());
+            Console.WriteLine("AI Move");
+            Console.WriteLine("CurrentMove: " + currentMove);
+            if (currentMove != null)
+            {
+                if (CheckMove())
+                {
+                    MakeMove();
+
+                }
+            }
+        }
         //end of program!      
     }
 }
