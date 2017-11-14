@@ -3,7 +3,7 @@
 % #######################################
 \def\mytitle{Coursework Report}
 \def\mykeywords{Napier, SET09117, Algorithms, Data Structure, Steven, Gibson, 40270320, Steven Gibson, report}
-\def\myauthor{Steven Gibson}
+\def\myauthor{Steven Robert Gibson}
 \def\contact{40270320@live.napier.ac.uk}
 \def\mymodule{Module Title (SET09117)}
 % #######################################
@@ -207,33 +207,32 @@ Player Names, To add a more personal touch to the game players change the names 
   	\label{fig:nonfloat}
 	\end{figure}
 
-The game also has a help feature for users who are not familiar with how to draughts or checkers this is a message box with the game's rules and winning condition. This accesable via the help menu or the standard MS Windows keyboard shortcut "F1".
+AI VS AI, This was a late addition to the the game.this was added to show a user how the game is played. this could be developed in a tutorial to teach a new user how to play draughts.  It was designed by taking the original AI and flipping it to the other side.
+
+Final enchantment, a game help feature for users who are not familiar with how to draughts or checkers this is a message box with the game's rules and winning condition. This accessible via the help menu or the standard MS Windows keyboard shortcut "F1".
 \begin{figure}[H]
   	\centering
-  	\includegraphics[scale = 0.75]{Help}
+  	\includegraphics[scale = 0.6]{Help}
 	\caption{Help Menu  - rules and wining condition for draughts}
   	\label{fig:nonfloat}
 	\end{figure}
 
-As stated above standard MS Windows keyboard he washortcuts where implemented through out the project. To give a more user friendly and professional product. 
+As stated above standard MS Windows keyboard shortcuts where implemented through out the project. To give a more user friendly and professional product. 
+
 
 Using the MoSCoW method of agile development, the following are extra features that would have been added are as follows:
-AI vs AI
 
-Persistence of Data
-CSV not working cant store queues and stacks, futrue try storing in json
+Persistence of Data, a save game function was written and implemented, however due foreseen circumstances this feature was not developed further. The current save game option writes data to a csv file, stacks and queues with in object get written in to the csv however the csv becomes corrupted when data queues get added. the cause of this is unknown however after some research with stackoverflow and MSDN, it does not seem possible without converting, an alternative that maybe tried in the future is to write to a json file. this was not done in this instance due to time constraints and the developer lack of json format at time of writing.
 
-Custom Backgrounds 
-more cosmetic dropped due to time restraint
+Multiple Jumps, This was an oversight by the developer when building the original game and did not come to light until further research in to draught rules where multiple jumps are possible. an attempt was made to correct this however the implementation was not well and caused bugs to appear in certain situations. all changes where reverted back and multiple jumps are not currently possible in this build.
 
-	
-	would like to have :AI VS AI, Game replays saved to a file for persistence
+Custom Backgrounds, The idea of changing the game's board was thought of as another way the user could personalise their game however due to time constraints again this idea was abandoned in favour of AI vs AI. Other cosmetic ideas where dropped as well such as custom Markers and different audio files for background music. These cosmetic features would have been selected by the user via the options menu. 
 	
 	\section{Critical Evaluation}
-	x
+The Game itself works without bugs, any found during testing where fixed. however colour choice when a user selects a marker could be changed to easier see if the marker was selected or the user's pointer was just hovering. As for the code, more comments could have been added to let anyone other than the developer know how each method interacts with the game, however each segment does have a comment to let people know what feature a certain segment deals with. certain pieces of code could have been rearranged to flow better when reading it. Due to the way the program is structured with loops and "if" statements performance on load has been compromised, however once loaded performance is restored and any delay is not noticeable also any delay with an AI making a move was intentionally done.
 
 	\section{Personal Evaluation}
-	x
+	The developer knew the time constraints and worked to them with each of the problems broken down and dealt with in a logical order. More time could have been spent with functionality instead of cosmetic details like getting persistence of data instead of music. That being said the a music is optional for the user. some challenges that were faced during the project were in the replay function, the stack being reversed and crashing the game, this was over came with pen and paper, a simulating the stack were drawn out and moved around this was were the conclusion of a third temporary stack was need to flip the stack round the correct way. Another issue arose during building the AI vs AI, the "Black" player was trying to select "White"markers, this was solved by an operator being round the way the marker row was being added instead of subtracted allow the "Black" player to move up the board. A challenge that was not over come was persistence of data, saving to a csv file was not possible and more resech is required to save to json file. however on the whole the project was a success a fully playable game of draughts was built with extra functionality and extra cosmetic details. 
     
    
    

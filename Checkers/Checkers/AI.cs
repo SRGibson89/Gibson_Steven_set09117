@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 namespace Checkers
 {
     class AI
@@ -10,6 +10,7 @@ namespace Checkers
         public static Move GetMove(Checkers_Board currentBoard)
         {
             List<Move> avaliableMoves = GetAvaliableMoves(currentBoard);
+            //get random postion in the list
             avaliableMoves.Shuffle();
             if (avaliableMoves.Count < 1)
                 return null;
@@ -46,10 +47,10 @@ namespace Checkers
         private static List<Move> CheckForMoves(Marker marker, Checkers_Board currentBoard)
         {
             List<Move> moves = new List<Move>();
-            //Console.WriteLine("CurrentBoard.State: " + currentBoard.GetState(marker.Row - 1, marker.Column - 1));
+            //if the marker is a white King
             if (currentBoard.GetState(marker.Row, marker.Column) == 3)
             {
-                
+                //if the marker next to it is black
                 if ((currentBoard.GetState(marker.Row - 1, marker.Column - 1) == 2) || (currentBoard.GetState(marker.Row - 1, marker.Column - 1) == 4))
                 {
                     if (currentBoard.GetState(marker.Row - 2, marker.Column - 2) == 0)
@@ -70,6 +71,7 @@ namespace Checkers
                     if (currentBoard.GetState(marker.Row + 2, marker.Column + 2) == 0)
                         moves.Add(new Move(new Marker(marker.Row + 1, marker.Column), new Marker(marker.Row + 3, marker.Column + 2)));
                 }
+                //if the squares next to it are empty
                 if (currentBoard.GetState(marker.Row - 1, marker.Column - 1) == 0)
                     moves.Add(new Move(new Marker(marker.Row + 1, marker.Column), new Marker(marker.Row, marker.Column - 1)));
                 if (currentBoard.GetState(marker.Row - 1, marker.Column + 1) == 0)
@@ -79,6 +81,7 @@ namespace Checkers
                 if (currentBoard.GetState(marker.Row + 1, marker.Column + 1) == 0)
                     moves.Add(new Move(new Marker(marker.Row + 1, marker.Column), new Marker(marker.Row + 2, marker.Column + 1)));
             }
+            //if the marker is a white standard
             else if (currentBoard.GetState(marker.Row, marker.Column) == 1)
             {
                 Console.WriteLine("Current State: "+currentBoard.GetState((marker.Row + 1), (marker.Column - 1)));
@@ -92,7 +95,7 @@ namespace Checkers
                     if (currentBoard.GetState(marker.Row + 2, marker.Column + 2) == 0)
                         moves.Add(new Move(new Marker(marker.Row + 1, marker.Column), new Marker(marker.Row + 3, marker.Column + 2)));
                 }
-                
+                //if the squares next to it are empty
                 if (currentBoard.GetState(marker.Row + 1, marker.Column + 1) == 0)
                     moves.Add(new Move(new Marker(marker.Row + 1, marker.Column), new Marker(marker.Row + 2, marker.Column + 1)));
                 Console.WriteLine("Current State:"+currentBoard.GetState(marker.Row + 1, marker.Column + 1) + "\n Row:"+(marker.Row+1)+ "\n Column: "+(marker.Column + 1));

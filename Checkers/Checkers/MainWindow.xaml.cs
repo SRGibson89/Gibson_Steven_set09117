@@ -26,6 +26,7 @@ namespace Checkers
     /// </summary>
     public partial class MainWindow : Window
     {
+        //globle variables used in multiple methods
         private Move currentMove;
         private String winner;
         private String turn = "Black";
@@ -42,19 +43,16 @@ namespace Checkers
         SingletonLists Game_List = SingletonLists.Instance;
         private int refid=0,replayid;
 
-
-
         public MainWindow()
         {
             InitializeComponent();
             this.Title = "Draughts";
             BuildBoard();
             newGame();
-            //refid = 0;
-            
-
+            refid = 0;
         }
 
+        //builds the board and places markers ready for play
         private void BuildBoard()
         {
             var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
@@ -87,7 +85,6 @@ namespace Checkers
             }
             Place_Markers();
         }
-
         private void Place_Markers()
         {
             var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
@@ -180,6 +177,7 @@ namespace Checkers
             }
         }
 
+        //Current makers state called multiple times
         UIElement GetGridElement(Grid grid, int row, int column)
         {
             for (int i = 0; i < grid.Children.Count; i++)
@@ -191,6 +189,7 @@ namespace Checkers
             return null;
         }
 
+        //cleans the board ready for a new game
         private void Cleaner()
         {
             for (int row = 1; row < 9; row++)
@@ -205,6 +204,7 @@ namespace Checkers
             Redo_Stack.Clear();
             
             ReTaken_Stack.Clear();
+            // copies Taken_stack to object
             while (Taken_Stack.Count != 0)
             {
                 
@@ -227,6 +227,7 @@ namespace Checkers
             
         }
 
+        //called every time a player make a move on the board
         public void Button_Click(Object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
@@ -254,8 +255,6 @@ namespace Checkers
                     {
                         MakeMove();
                         AiTurn();
-                        
-                    
                     }
 
                 }
@@ -264,13 +263,13 @@ namespace Checkers
                     if (CheckMove())
                     {
                         MakeMove();
-                        //changeTurn();
                     }
 
                 }
             }
         }
 
+        //Change player turns
         private void changeTurn()
         {
             if (turn == "Black")
@@ -285,6 +284,7 @@ namespace Checkers
             }
         }
 
+        //Move markers
         private void MakeMove()
         {
             if ((currentMove.markerBefore != null) && (currentMove.markerAfter != null))
@@ -311,17 +311,6 @@ namespace Checkers
             }
 
             CheckforWinnner();
-        }
-
-        private void addToUndo(Marker markerbefore, Marker markerafter)
-        {
-            Undo_Stack.Push(markerbefore.Row);
-            Undo_Stack.Push(markerbefore.Column);
-            Undo_Stack.Push(markerbefore.Kinged);
-            Undo_Stack.Push(markerafter.Row);
-            Undo_Stack.Push(markerafter.Column);
-            Undo_Stack.Push(markerafter.Kinged);
-
         }
 
         //Promtions
@@ -359,6 +348,7 @@ namespace Checkers
             }
         }
 
+        //checks for a winner
         private void CheckforWinnner()
         {
             int Whites = 0, Blacks = 0;
@@ -406,6 +396,7 @@ namespace Checkers
 
         }
 
+        //Move Validation
         private Boolean CheckMove()
         {
             var BoardBlack = (SolidColorBrush)new BrushConverter().ConvertFromString("#CF9C63");
@@ -452,7 +443,6 @@ namespace Checkers
                 return false;
             }
         }
-
         private bool CheckMoveWhite(Button button1, Button button2)
         {
             Checkers_Board currentBoard = GetBoard();
@@ -528,7 +518,6 @@ namespace Checkers
             showError("Invalid Move. Try Again.");
             return false;
         }
-
         private void RemoveMarker(Marker middleMove)
         {
             Taken_Stack.Push(middleMove.Row);
@@ -552,7 +541,6 @@ namespace Checkers
             Grid.SetRow(stackPanel, middleMove.Row);
             DraughtsBoard.Children.Add(stackPanel);
         }
-
         private bool CheckMoveBlack(Button button1, Button button2)
         {
             Checkers_Board currentBoard = GetBoard();
@@ -627,8 +615,8 @@ namespace Checkers
             showError("Invalid Move. Try Again.");
             return false;
         }
-
-
+        
+        //Current board called multiple times
         private Checkers_Board GetBoard()
         {
             Checkers_Board board = new Checkers_Board();
@@ -668,16 +656,24 @@ namespace Checkers
             return board;
         }
 
+        //error message with a changable string
         private void showError(string error)
         {
             MessageBox.Show(error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+        //New Game selected
+        private void newGame_Click(object sender, RoutedEventArgs e)
+        {
+            newGame();
+        }
 
+        //Exit selected
         private void exit_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
-
+        
+        //Help selected
         private void help_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("\b To Play \n" +
@@ -694,7 +690,8 @@ namespace Checkers
                 "\b To Win\n" +
                 "Capture all your opponents pieces.", "How To Play");
         }
-
+ 
+        //Options selected
         private void option_Click(object sender, RoutedEventArgs e)
         {
             //options window to change settings
@@ -724,7 +721,8 @@ namespace Checkers
             playername2 = optionwindow.txtp2.Text;
 
         }
-
+        
+        //Make a new Game
         private void newGame()
         {
             
@@ -742,9 +740,6 @@ namespace Checkers
             //Console.WriteLine("GameID: " + refid);
            
         }
-
-       
-
         private void NewReplay()
         {
             //new replay
@@ -753,11 +748,18 @@ namespace Checkers
             Game_List.GameList.Add(GameHistory);
         }
 
-        private void newGame_Click(object sender, RoutedEventArgs e)
-        {
-            newGame();
-        }
+        
         //Undo Function
+        private void addToUndo(Marker markerbefore, Marker markerafter)
+        {
+            Undo_Stack.Push(markerbefore.Row);
+            Undo_Stack.Push(markerbefore.Column);
+            Undo_Stack.Push(markerbefore.Kinged);
+            Undo_Stack.Push(markerafter.Row);
+            Undo_Stack.Push(markerafter.Column);
+            Undo_Stack.Push(markerafter.Kinged);
+
+        }
         private void undo_Click(object sender, RoutedEventArgs e)
         {
 
@@ -787,7 +789,6 @@ namespace Checkers
             }
             //MessageBox.Show("Undo Test");
         }
-
         private void undoMove(Marker markerBefore, Marker markerAfter)
         {
             if ((markerBefore != null) && (markerAfter != null))
@@ -866,7 +867,7 @@ namespace Checkers
                 Redo_Stack.Push(markerBefore.Kinged);
             }
         }
-        // this if for the undo if marker ws taken. readds them to the board
+        // this if for the undo if marker was taken. readds them to the board
         private void addWhiteButton(Marker takenMarker)
         {
             ReTaken_Stack.Push(takenMarker.Row);
@@ -930,6 +931,7 @@ namespace Checkers
             Grid.SetRow(stackPanel, takenMarker.Row);
             DraughtsBoard.Children.Add(stackPanel);
         }
+       
         //redo function
         private void redo_Click(object sender, RoutedEventArgs e)
         {
@@ -958,7 +960,6 @@ namespace Checkers
                 changeTurn();
             }
         }
-
         private void redoMove(Marker markerBefore, Marker markerAfter)
         {
             if ((markerBefore != null) && (markerAfter != null))
@@ -1034,7 +1035,6 @@ namespace Checkers
         {
             saveGame();
         }
-
         private void saveGame()
         {
             string filename = @"\History.csv"; //filenmae where data will be stored
@@ -1077,9 +1077,6 @@ namespace Checkers
             }//foreach ends
 
         }
-
-        
-
         private void replayGame_Click(object sender, RoutedEventArgs e)
         {
 
@@ -1095,13 +1092,7 @@ namespace Checkers
         async void ReplayGame()
         {
 
-            //   if (replayid == 0)
-            //  {
-            //      MessageBox.Show("No Replays Avalible");
-            // }
-            // else
-            // {
-
+            
             foreach (History h in Game_List.GameList)
 
             {
@@ -1156,9 +1147,9 @@ namespace Checkers
                                 Marker markerA = new Marker(rowa, columna);
 
                                 await PutTaskReplayDelay();
-                                //wait(2000); 
+                                
                                 ShowGame(markerB, markerA);
-                                //redoMove(markerB, markerA);
+                                
                             }
 
                         }
@@ -1173,7 +1164,6 @@ namespace Checkers
             
             //}
         }
-
         private void ShowGame(Marker markerBefore, Marker markerAfter)
         {
 
@@ -1261,7 +1251,6 @@ namespace Checkers
                
             
         }
-
         private void ReplayRemoveMarker(Marker middleMove)
         {
            
@@ -1283,63 +1272,49 @@ namespace Checkers
             DraughtsBoard.Children.Add(stackPanel);
         
         }
-
         async Task PutTaskReplayDelay()
         {
             await Task.Delay(2000);
         }
-
-        //AI Function
-        async Task PutTaskAIDelay()
-        {
-            await Task.Delay(1000);
-        }
-
-        private void wait(int ms)
-        {
-
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(ms);
-            timer.Start();
-
-        }
-
+        
+        //AI vs Player
         async void AiTurn()
         {
             await PutTaskAIDelay();
             currentMove = AI.GetMove(GetBoard());
             Console.WriteLine("AI Move");
-            Console.WriteLine("CurrentMove: "+currentMove);
+            Console.WriteLine("CurrentMove: " + currentMove);
             if (currentMove != null)
             {
                 if (CheckMove())
                 {
                     MakeMove();
-                    
+
                 }
             }
         }
-        
+        async Task PutTaskAIDelay()
+        {
+            await Task.Delay(1000);
+        }
 
+        //AI VS AI
         async void AiVSAi()
         {
+            turn = "White";
             while (won == false)
             {
+                WhiteAiTurn();
+                await PutTaskAIDelay();
                 BlackAiTurn();
                 await PutTaskAIDelay();
-                
-                WhiteAiTurn();
-
-
             }
         }
-        //AI VS AI
         private void BlackAiTurn()
         {
 
             currentMove = BlackAI.GetMove(GetBoard());
-            Console.WriteLine("AI Move");
-            Console.WriteLine("CurrentMove: " + currentMove);
+            
             if (currentMove != null)
             {
                 if (CheckMove())
@@ -1353,8 +1328,7 @@ namespace Checkers
         {
 
             currentMove = AI.GetMove(GetBoard());
-            Console.WriteLine("AI Move");
-            Console.WriteLine("CurrentMove: " + currentMove);
+
             if (currentMove != null)
             {
                 if (CheckMove())

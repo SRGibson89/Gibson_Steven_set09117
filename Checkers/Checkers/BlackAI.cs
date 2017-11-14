@@ -11,6 +11,7 @@ namespace Checkers
         public static Move GetMove(Checkers_Board currentBoard)
         {
             List<Move> avaliableMoves = GetAvaliableMoves(currentBoard);
+            //get random postion in the list
             avaliableMoves.Shuffle();
             if (avaliableMoves.Count < 1)
                 return null;
@@ -32,6 +33,8 @@ namespace Checkers
                 {
                     if ((currentBoard.GetState(row, column) == 2) || (currentBoard.GetState(row, column) == 4))
                     {
+                        
+                        
                         currentMarkers.Add(new Marker(row, column));
                         
                     }
@@ -47,29 +50,28 @@ namespace Checkers
         private static List<Move> CheckForMoves(Marker marker, Checkers_Board currentBoard)
         {
             List<Move> moves = new List<Move>();
-            //Console.WriteLine("CurrentBoard.State: " + currentBoard.GetState(marker.Row - 1, marker.Column - 1));
             if (currentBoard.GetState(marker.Row, marker.Column) == 4)
             {
 
                 if ((currentBoard.GetState(marker.Row + 1, marker.Column - 1) == 1) || (currentBoard.GetState(marker.Row + 1, marker.Column - 1) == 3))
                 {
                     if (currentBoard.GetState(marker.Row + 2, marker.Column - 2) == 0)
-                        moves.Add(new Move(new Marker(marker.Row - 1, marker.Column), new Marker(marker.Row + 1, marker.Column - 2)));
+                        moves.Add(new Move(new Marker(marker.Row + 1, marker.Column), new Marker(marker.Row, marker.Column - 2)));
                 }
                 if ((currentBoard.GetState(marker.Row + 1, marker.Column + 1) == 1) || (currentBoard.GetState(marker.Row + 1, marker.Column + 1) == 3))
                 {
                     if (currentBoard.GetState(marker.Row + 2, marker.Column + 2) == 0)
-                        moves.Add(new Move(new Marker(marker.Row - 1, marker.Column), new Marker(marker.Row + 1, marker.Column + 2)));
+                        moves.Add(new Move(new Marker(marker.Row , marker.Column), new Marker(marker.Row, marker.Column + 2)));
                 }
-                if ((currentBoard.GetState(marker.Row - 1, marker.Column - 1) == 1) || (currentBoard.GetState(marker.Row - 1, marker.Column - 1) == 3))
+                if ((currentBoard.GetState(marker.Row - 1, marker.Column - 1) == 1) || (currentBoard.GetState(marker.Row, marker.Column - 1) == 3))
                 {
                     if (currentBoard.GetState(marker.Row - 2, marker.Column - 2) == 0)
-                        moves.Add(new Move(new Marker(marker.Row - 1, marker.Column), new Marker(marker.Row - 3, marker.Column - 2)));
+                        moves.Add(new Move(new Marker(marker.Row , marker.Column), new Marker(marker.Row - 1, marker.Column - 2)));
                 }
-                if ((currentBoard.GetState(marker.Row - 1, marker.Column + 1) == 1) || (currentBoard.GetState(marker.Row - 1, marker.Column + 1) == 3))
+                if ((currentBoard.GetState(marker.Row - 1, marker.Column + 1) == 1) || (currentBoard.GetState(marker.Row, marker.Column + 1) == 3))
                 {
                     if (currentBoard.GetState(marker.Row + 2, marker.Column + 2) == 0)
-                        moves.Add(new Move(new Marker(marker.Row - 1, marker.Column), new Marker(marker.Row - 3, marker.Column + 2)));
+                        moves.Add(new Move(new Marker(marker.Row , marker.Column), new Marker(marker.Row - 1, marker.Column + 2)));
                 }
                 if (currentBoard.GetState(marker.Row + 1, marker.Column - 1) == 0)
                     moves.Add(new Move(new Marker(marker.Row - 1, marker.Column), new Marker(marker.Row, marker.Column - 1)));
@@ -82,7 +84,7 @@ namespace Checkers
             }
             else if (currentBoard.GetState(marker.Row, marker.Column) == 2)
             {
-                Console.WriteLine("Current State: " + currentBoard.GetState((marker.Row + 1), (marker.Column - 1)));
+                Console.WriteLine("Current State: " + currentBoard.GetState((marker.Row), (marker.Column )));
                 if ((currentBoard.GetState(marker.Row - 1, marker.Column - 1) == 1) || (currentBoard.GetState(marker.Row - 1, marker.Column - 1) == 3))
                 {
                     if (currentBoard.GetState(marker.Row - 2, marker.Column - 2) == 0)
@@ -95,11 +97,11 @@ namespace Checkers
                 }
 
                 if (currentBoard.GetState(marker.Row - 1, marker.Column + 1) == 0)
-                    moves.Add(new Move(new Marker(marker.Row - 1, marker.Column), new Marker(marker.Row - 2, marker.Column + 1)));
-                Console.WriteLine("Current State:" + currentBoard.GetState(marker.Row - 1, marker.Column + 1) + "\n Row:" + (marker.Row - 1) + "\n Column: " + (marker.Column + 1));
+                    moves.Add(new Move(new Marker(marker.Row + 1, marker.Column), new Marker(marker.Row , marker.Column + 1)));
+                Console.WriteLine("NEW State:" + currentBoard.GetState(marker.Row , marker.Column) + "\n Row:" + (marker.Row - 1) + "\n Column: " + (marker.Column + 1));
 
                 if (currentBoard.GetState(marker.Row - 1, marker.Column - 1) == 0)
-                    moves.Add(new Move(new Marker(marker.Row - 1, marker.Column), new Marker(marker.Row - 2, marker.Column - 1)));
+                    moves.Add(new Move(new Marker(marker.Row + 1, marker.Column), new Marker(marker.Row , marker.Column - 1)));
             }
             return moves;
         }
