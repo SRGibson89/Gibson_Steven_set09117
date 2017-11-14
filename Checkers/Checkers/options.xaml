@@ -1,0 +1,26 @@
+﻿<Window x:Class="Checkers.options"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Checkers"
+        mc:Ignorable="d"
+        Title="Game Settings" Height="200" Width="200">
+    <Grid HorizontalAlignment="Center">
+        <Button x:Name="bntcancel" Content="Cancel" HorizontalAlignment="Left" Margin="107,139,0,0" VerticalAlignment="Top" Width="75" Click="bntcancel_Click"/>
+        <Button x:Name="btnok" Content="OK" HorizontalAlignment="Left" Height="20" Margin="19,139,0,0" VerticalAlignment="Top" Width="69" Click="btnok_Click"/>
+        <ComboBox x:Name="cmbnoPlayers" Margin="128,10,22,0" VerticalAlignment="Top" SelectedIndex="1" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" Width="35">
+            <ComboBoxItem Content="0" HorizontalAlignment="Left" Width="118"/>
+            <ComboBoxItem Content="1" HorizontalAlignment="Left" Width="118"/>
+            <ComboBoxItem Content="2" HorizontalAlignment="Left" Width="118"/>
+
+        </ComboBox>
+        <Label Content="No. Players :" HorizontalAlignment="Left" Margin="42,8,0,0" VerticalAlignment="Top" Width="86" VerticalContentAlignment="Center"/>
+        <Label Content="Player 1:" HorizontalAlignment="Left" Height="30" Margin="16,34,0,0" VerticalAlignment="Top" Width="60"/>
+        <TextBox x:Name="txtp1" HorizontalAlignment="Left" Height="25" Margin="82,38,0,0" TextWrapping="Wrap" Text="White" VerticalAlignment="Top" Width="80"/>
+        <Label Content="Player 2:" HorizontalAlignment="Left" Height="30" Margin="16,59,0,0" VerticalAlignment="Top" Width="60"/>
+        <TextBox x:Name="txtp2" HorizontalAlignment="Left" Height="25" Margin="82,63,0,0" TextWrapping="Wrap" Text="Black" VerticalAlignment="Top" Width="80" />
+        <CheckBox x:Name="chkMusic" Content="Background Music" HorizontalAlignment="Left" Margin="20,94,0,0" VerticalAlignment="Top" Width="140" />
+
+    </Grid>
+</Window>
